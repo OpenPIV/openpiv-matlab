@@ -757,7 +757,6 @@ handles.filebase = handles.files{1}(1:max(findstr(handles.files{1},'_'))-1);
 guidata(handles.figure1,handles);
 
 function handles = ReadImageDirectory(handles)
-
 firstDif = find(handles.files{2}-handles.files{1},1,'first'); % how the first two files are different?
 handles.filebase = handles.files{1}(1:firstDif-1); % base file name, e.g. bird_b00100
 fileType = handles.files{1}(firstDif:end-4); % without extension
@@ -1228,8 +1227,12 @@ return
 
 function [c] = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth)
 
+% temprorary solution
+disp('fix it')
 a2 = a2 - mean2(a2);
 b2 = b2 - mean2(b2);
+a2(a2<0) = 0;
+b2(b2<0) = 0;
 
 b2 = b2(end:-1:1,end:-1:1);
 
@@ -1254,6 +1257,8 @@ if ~peak2
 else
     s2n = peak1/peak2;
 end
+
+if any(c(:)<0), keyboard, end
 
 % If Signal-To-Noise ratio is lower than the limit, "mark" it:
 if s2n < s2nl

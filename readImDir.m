@@ -255,13 +255,14 @@ if isdir(handles.path)
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpeg')));
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tif')));
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tiff')));
-    if ismac
-        handles.files = dir(fullfile(handles.path,'*.BMP'));
-        handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPG')));
-        handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPEG')));
-        handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIF')));
-        handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIFF')));
-    end
+    % this fails on Mac OS X. removed on Apr 24, 2011, Alex
+%     if ismac
+%         handles.files = dir(fullfile(handles.path,'*.BMP'));
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPG')));
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPEG')));
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIF')));
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIFF')));
+%     end
 else
     handles.path = cd;
     set(handles.edit_path,'String',handles.path);
@@ -270,13 +271,13 @@ else
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpeg')));
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tif')));
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tiff')));
-    if ismac
-        handles.files = dir(fullfile(handles.path,'*.BMP'));
-        handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPG')));
-        handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPEG')));
-        handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIF')));
-        handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIFF')));
-    end
+%     if ismac
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.BMP')));
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPG')));
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPEG')));
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIF')));
+%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIFF')));
+%     end
 end
 list = dir(handles.path);
 ind = find(cat(1,list.isdir));
