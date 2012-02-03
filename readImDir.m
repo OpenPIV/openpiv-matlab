@@ -255,7 +255,7 @@ if isdir(handles.path)
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpeg')));
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tif')));
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tiff')));
-    % this fails on Mac OS X. removed on Apr 24, 2011, Alex
+    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.png')));
 %     if ismac
 %         handles.files = dir(fullfile(handles.path,'*.BMP'));
 %         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPG')));
@@ -271,8 +271,9 @@ else
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpeg')));
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tif')));
     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tiff')));
+    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.png')));
 %     if ismac
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.BMP')));
+%         handles.files = dir(fullfile(handles.path,'*.BMP'));
 %         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPG')));
 %         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPEG')));
 %         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIF')));
