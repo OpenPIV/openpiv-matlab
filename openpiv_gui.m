@@ -1,35 +1,35 @@
-function varargout = urapiv_gui(varargin)
-% URAPIV_GUI M-file for urapiv_gui.fig
-%      URAPIV_GUI, by itself, creates a new URAPIV_GUI or raises the existing
+function varargout = openpiv_gui(varargin)
+% OPENPIV_GUI M-file for openpiv_gui.fig
+%      OPENPIV_GUI, by itself, creates a new OPENPIV_GUI or raises the existing
 %      singleton*.
 %
-%      H = URAPIV_GUI returns the handle to a new URAPIV_GUI or the handle to
+%      H = OPENPIV_GUI returns the handle to a new OPENPIV_GUI or the handle to
 %      the existing singleton*.
 %
-%      URAPIV_GUI('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in URAPIV_GUI.M with the given input arguments.
+%      OPENPIV_GUI('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in OPENPIV_GUI.M with the given input arguments.
 %
-%      URAPIV_GUI('Property','Value',...) creates a new URAPIV_GUI or raises the
+%      OPENPIV_GUI('Property','Value',...) creates a new OPENPIV_GUI or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
 %      applied to the GUI before urapiv_gui_OpeningFunction gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to urapiv_gui_OpeningFcn via varargin.
+%      stop.  All inputs are passed to openpiv_gui_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help urapiv_gui
+% Edit the above text to modify the response to help openpiv_gui
 
-% Last Modified by GUIDE v2.5 11-Aug-2009 23:11:28
+% Last Modified by GUIDE v2.5 04-Feb-2012 22:27:17
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @urapiv_gui_OpeningFcn, ...
-    'gui_OutputFcn',  @urapiv_gui_OutputFcn, ...
+    'gui_OpeningFcn', @openpiv_gui_OpeningFcn, ...
+    'gui_OutputFcn',  @openpiv_gui_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,8 +44,8 @@ end
 
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before urapiv_gui is made visible.
-function urapiv_gui_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before openpiv_gui is made visible.
+function openpiv_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % handles.lastexperiment = getappdata(handles.figure1,'lastexperiment');
 % hObject    handle to pushbutton_getdir (see GCBO)
@@ -62,9 +62,9 @@ function urapiv_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to urapiv_gui (see VARARGIN)
+% varargin   command line arguments to openpiv_gui (see VARARGIN)
 
-% Choose default command line output for urapiv_gui
+% Choose default command line output for openpiv_gui
 handles.output = hObject;
 movegui(hObject,'center');
 set(hObject,'Toolbar','None');
@@ -72,7 +72,7 @@ set(hObject,'Toolbar','None');
 guidata(hObject, handles);
 
 % This sets up the initial plot - only do when we are invisible
-% so window can get raised using urapiv_gui.
+% so window can get raised using openpiv_gui.
 if strcmp(get(hObject,'Visible'),'off')
     load('openpiv_logo.mat');
     imshow(im,'Parent',findobj(hObject,'type','axes')); %handles.axes_main);
@@ -81,12 +81,12 @@ if strcmp(get(hObject,'Visible'),'off')
 end
 axis off
 
-% UIWAIT makes urapiv_gui wait for user response (see UIRESUME)
+% UIWAIT makes openpiv_gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = urapiv_gui_OutputFcn(hObject, eventdata, handles)
+function varargout = openpiv_gui_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1237,6 +1237,8 @@ ffta=fft2(single(a2),NfftHeight,NfftWidth);
 fftb=fft2(single(b2),NfftHeight,NfftWidth);
 
 c = real(ifft2(ffta.*fftb));
+c(c<0) = 0;
+
 return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [peakx,peaky,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,sclt,ittWidth,ittHeight)
@@ -1255,8 +1257,6 @@ if ~peak2
 else
     s2n = peak1/peak2;
 end
-
-if any(c(:)<0), keyboard, end
 
 % If Signal-To-Noise ratio is lower than the limit, "mark" it:
 if s2n < s2nl
