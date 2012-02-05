@@ -22,7 +22,7 @@ function varargout = openpiv_gui(varargin)
 
 % Edit the above text to modify the response to help openpiv_gui
 
-% Last Modified by GUIDE v2.5 04-Feb-2012 22:27:17
+% Last Modified by GUIDE v2.5 05-Feb-2012 00:59:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -185,6 +185,13 @@ s2nl = str2double(get(handles.edit_s2nl,'string'));
 sclt = str2double(get(handles.edit_scale,'string'));
 outl = str2double(get(handles.edit_outl,'string'));
 
+preprocess = get(handles.checkbox1,'Value');
+if preprocess
+    prepfun = str2func(handles.preprocess);
+else
+    prepfun = inline('x');
+end
+
 if isfield(handles,'rect') && ~isempty(handles.rect)
     cropvec = handles.rect;
 else
@@ -220,6 +227,10 @@ switch handles.filesType
 
             [a,b,a1,b1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 
+            a1 = prepfun(a1);
+            b1 = prepfun(b1);
+
+            
             [verSize,horSize]= size(a1);
 
             % Prepare the results storage;
@@ -243,6 +254,9 @@ switch handles.filesType
                     if (get(hObject,'UserData') == 1)
                         a2 = a1(m:m+ittHeight-1,k:k+ittWidth-1);
                         b2 = b1(m:m+ittHeight-1,k:k+ittWidth-1);
+                        
+%                         a2 = prepfun(a2);
+%                         b2 = prepfun(b2);
 
                         c = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth);
                         % c = cross_correlate_rect(a2,b2,Nfftx,Nffty);
@@ -366,6 +380,9 @@ switch handles.filesType
 
             [a,b,a1,b1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 
+            a1 = prepfun(a1);
+            b1 = prepfun(b1);
+            
             [verSize,horSize]= size(a1);
 
             % Prepare the results storage;
@@ -392,6 +409,7 @@ switch handles.filesType
 
                     a2 = a1(m:m+ittHeight-1,k:k+ittWidth-1);
                     b2 = b1(m:m+ittHeight-1,k:k+ittWidth-1);
+                    
 
                     c = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth);
                     % c = cross_correlate_rect(a2,b2,Nfftx,Nffty);
@@ -439,7 +457,7 @@ switch handles.filesType
             vector = u + sqrt(-1)*v;
 
             % Remove outlayers - GLOBAL FILTERING
-            vector(abs(vector)>mean(abs(vector(find(vector))))*outl) = 0;
+            vector(abs(vector)>mean(abs(vector((vector))))*outl) = 0;
             u = real(vector);
             v = imag(vector);
 
@@ -454,8 +472,8 @@ switch handles.filesType
             % 2. For velocity vector length (and angle)
             % 3. OR OTHER.
 
-            lmtv = mean(tmpv(find(tmpv))) + 3*std(tmpv(find(tmpv)));
-            lmtu = mean(tmpu(find(tmpu))) + 3*std(tmpu(find(tmpu)));
+            lmtv = mean(tmpv(tmpv)) + 3*std(tmpv(tmpv));
+            lmtu = mean(tmpu(tmpu)) + 3*std(tmpu(tmpu));
             u_out = find(tmpu>lmtu);
             v_out = find(tmpv>lmtv);
 
@@ -498,8 +516,8 @@ switch handles.filesType
             % Only for final, filtered and interpolated data
             %    imshow(a,[]);
             %    hold on
-            quiverm(res,2,'g','LineWidth',1);
-            drawnow
+%             quiverm(res,2,'g','LineWidth',1);
+%             drawnow
             %    F(:,fileind) = getframe;
             hold off;
         end
@@ -1406,3 +1424,31 @@ hu = [x+u-alpha*(u+beta*(v+eps));x+u; ...
 hv = [y+v-alpha*(v-beta*(u+eps));y+v; ...
     y+v-alpha*(v+beta*(u+eps));NaN];
 h2 = plot(hu(:),hv(:),'Color',color,'EraseMode','none');
+
+
+% --- Executes on button press in checkbox1.
+function checkbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+if get(hObject,'Value')
+    % if checked
+    set(handles.pushbutton8,'Enable','on');
+else
+    set(handles.pushbutton8,'Enable','off');
+end
+    
+
+
+% --- Executes on button press in pushbutton8.
+function pushbutton8_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+preprocess_mfile = uigetfile('*.m','Pick an M-file');
+handles.preprocess = preprocess_mfile(1:end-2);
+guidata(handles.figure1,handles);
+
+

@@ -8,7 +8,12 @@ function [h] = quivertxt(txtfile,varargin)
 % Date:   July '99
 % 
 
-x = load([txtfile,'.txt']);
+[~,~,ext] = fileparts(txtfile);
+if isempty(ext)
+    x = load([txtfile,'.txt']);
+else
+    x = load(txtfile);
+end
 quiverm(x,varargin{:});
 axis ij
 axis tight

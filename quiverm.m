@@ -14,7 +14,7 @@ function [] = quiverm(x,varargin)
 % without outliers.
 % on IHW_Video
 
-if isstr(x)
+if ischar(x)
 	x = eval(x);
 end
 
