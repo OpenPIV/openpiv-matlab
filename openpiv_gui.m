@@ -246,7 +246,8 @@ switch handles.filesType
 
             %%%%%% Start the loop for each interrogation block %%%%%%%
             axes(handles.axes1);
-            imshow(imadjust(a),[]);
+            % imshow(imadjust(a),[]);
+            imshow(prepfun(a),[]);
             hold on
 
             for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
@@ -397,7 +398,8 @@ switch handles.filesType
             NfftHeight = 2*ittHeight;
 
             axes(handles.axes1);
-            imshow(imadjust(a),[]);
+            % imshow(imadjust(a),[]);
+            imshow(prepfun(a),[]);
             hold on
 
             for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
@@ -976,7 +978,13 @@ tmp = imread(fullfile(handles.path,handles.files{filenum}));
 if length(size(tmp)) == 3
     tmp = rgb2gray(tmp);
 end
-imshow(imadjust(tmp));
+preprocess = get(handles.checkbox1,'Value');
+if preprocess
+    prepfun = str2func(handles.preprocess);
+else
+    prepfun = inline('x');
+end
+imshow(prepfun(tmp));
 guidata(hObject, handles);
 
 
@@ -994,7 +1002,13 @@ tmp = imread(fullfile(handles.path,handles.files{filenum}));
 if length(size(tmp)) == 3
     tmp = rgb2gray(tmp);
 end
-imshow(imadjust(tmp));
+preprocess = get(handles.checkbox1,'Value');
+if preprocess
+    prepfun = str2func(handles.preprocess);
+else
+    prepfun = inline('x');
+end
+imshow(prepfun(tmp));
 guidata(hObject, handles);
 
 
@@ -1060,16 +1074,25 @@ function load_Callback(hObject, eventdata, handles)
 axes(handles.axes1);
 set(handles.axes1,'visible','off');
 set(handles.axes1,'Units','pixels');
+
+preprocess = get(handles.checkbox1,'Value');
+if preprocess
+    prepfun = str2func(handles.preprocess);
+else
+    prepfun = inline('imadjust(x)');
+end
+
 try
     % imshow(fullfile(handles.path,handles.files{1}));
     tmp = imread(fullfile(handles.path,handles.files{1}));
     if length(size(tmp)) == 3
         tmp = rgb2gray(tmp);
     end
-    imshow(imadjust(tmp));
+    imshow(prepfun(tmp));
 catch
     tmp = tiffread2(fullfile(handles.path,handles.files{1}));
-    imshow(imadjust(im2double(tmp.data)));
+    tmp = im2double(tmp.data);
+    imshow(prepfun(tmp));
 end
 set(handles.prev_image,'Visible','On');
 set(handles.image_next,'Visible','On');
