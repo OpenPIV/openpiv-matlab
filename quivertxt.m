@@ -1,9 +1,13 @@
 function [h] = quivertxt(txtfile,varargin)
-% QUIVERTXT Uses QUIVERM file and original
-% Mathworks' QUIVER function and plots
-% quiver plot of the text file produced by
-% URAPIV program.
+% QUIVERTXT(TEXTFILENAME,VARARGIN) plots
+% quiver plot of the text file produced by the
+% OPENPIV program.
+%
+% Usage:
+% quivertxt('test_001_b.txt')
 % 
+% See also: QUIVERM, QUIVER, OPENPIV
+
 % Author: Alex Liberzon
 % Date:   July '99
 % 
