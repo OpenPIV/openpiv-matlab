@@ -31,4 +31,4 @@ Install
 1. Install Matlab, including Image Processing and Statistical Toolboxes
 2. Create OpenPIV directory under your working directory, e.g. C:\Matlab\work\openpiv
 3. Download the openpiv-matlab files
-4. Run urapiv_gui.m and follow the GUI info
+4. Run openpivgui.m and follow the GUI instructions
