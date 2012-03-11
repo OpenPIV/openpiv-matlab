@@ -534,8 +534,8 @@ switch handles.filesType
                         if u ~= 0 || v ~= 0
                             %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                             %                             drawnow;
-                            plotarrow(x,y,u,v,'y',2);
-                            drawnow
+                            plotarrow(x,y,u,v,'g',10);
+                            % drawnow
                         end
                     end
                 end
@@ -688,9 +688,9 @@ switch handles.filesType
                     if u ~= 0 || v ~= 0
                         %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                         %                             drawnow;
-                        plotarrow(x,y,u,v,'y',2);
+                        plotarrow(x,y,u,v,'g',10);
                         % draw_arrow([x,y],[x+u,y+v],20)
-                        drawnow
+                        % drawnow
                     end
                 end
             end
