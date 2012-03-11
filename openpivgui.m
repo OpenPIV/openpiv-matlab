@@ -534,7 +534,7 @@ switch handles.filesType
                         if u ~= 0 || v ~= 0
                             %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                             %                             drawnow;
-                            plotarrow(x,y,u,v,'y',100);
+                            plotarrow(x,y,u,v,'y',2);
                             drawnow
                         end
                     end
@@ -688,7 +688,7 @@ switch handles.filesType
                     if u ~= 0 || v ~= 0
                         %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                         %                             drawnow;
-                        plotarrow(x,y,u,v,'y',100);
+                        plotarrow(x,y,u,v,'y',2);
                         % draw_arrow([x,y],[x+u,y+v],20)
                         drawnow
                     end
@@ -708,12 +708,14 @@ switch handles.filesType
             vector = u + sqrt(-1)*v;
             
             % Remove outlayers - GLOBAL FILTERING
-            vector(abs(vector)>mean(abs(vector((vector))))*outl) = 0;
+            ind = isfinite(abs(vector)) & abs(vector) ~= 0;
+            limit = mean(abs(vector(ind)))*outl;
+            outliers = abs(vector) > limit;
+            vector(outliers) = 0;
             u = real(vector);
             v = imag(vector);
             
             % Adaptive Local Median filtering
-            
             kernel = [-1 -1 -1; -1 8 -1; -1 -1 -1];
             tmpv = abs(conv2(v,kernel,'same'));
             tmpu = abs(conv2(u,kernel,'same'));
@@ -722,9 +724,12 @@ switch handles.filesType
             % 1. Mean + 3*STD for each one separately OR
             % 2. For velocity vector length (and angle)
             % 3. OR OTHER.
+            ind = isfinite(abs(tmpv)) & abs(tmpv) ~= 0;
+            lmtv = mean(tmpv(ind)) + 3*std(tmpv(ind));
             
-            lmtv = mean(tmpv(tmpv)) + 3*std(tmpv(tmpv));
-            lmtu = mean(tmpu(tmpu)) + 3*std(tmpu(tmpu));
+            ind = isfinite(abs(tmpu)) & abs(tmpu) ~= 0;
+            lmtu = mean(tmpu(ind)) + 3*std(tmpu(ind));
+            
             u_out = find(tmpu>lmtu);
             v_out = find(tmpv>lmtv);
             
