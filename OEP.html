@@ -1,0 +1,68 @@
+---
+layout: default
+title: OpenPIV-Matlab 
+---
+
+<h1 id="Projectsandproposals">Projects and proposals</h1>
+<p>
+There are <strong>three</strong> major projects:
+</p>
+<p>
+1. <strong>C++ core functions</strong> <br />
+2. <strong>GUI development in Python, using TraitsUI and PyQt</strong> <br />
+3. <strong>New algorithms and extensions (use any platform - Matlab, Python or C++)</strong>
+</p>
+<h3 id="Goalstoconsider">Goals to consider</h3>
+<p>
+1. Remain cross-platform <br />
+2. Maximize processing efficiency <br />
+3. Minimize number of required libraries
+</p>
+<h2 id="a1.Ccorefunctionsproject:">1. C++ core functions project:</h2>
+<p>
+1. URAPIV-C++ tests and debugging (starting from the source tarball _0.1)
+</p>
+<h2 id="a2.GUIdevelopmentinPythonusingTraitsUIandPyQt"><strong>2. GUI development in Python, using TraitsUI and PyQt</strong></h2>
+<p>
+1. <a class="wiki" href="/apps/trac/openpiv/wiki/PyQT%20development%20proposal">Develop GUI using TraitsUI, identical to Qt GUI from URAPIV-C++ (see the snapshot and /PyQT branch)</a>
+</p>
+<p>
+2. Develop Python callback functions (using PyPIV functions as a basis)
+</p>
+<p>
+3. Develop Python-C++ bindings to allow use of URAPIV-C++ core functions from the GUI
+</p>
+<h2 id="a3.Newalgorithmsandextensionsuseanyplatform-MatlabPythonorC"><strong>3. New algorithms and extensions (use any platform - Matlab, Python or C++)</strong></h2>
+<h3 id="GeneralProcessingPreparations">General Processing Preparations</h3>
+<p>
+1. Multi-threading support
+</p>
+<ul><li>Multi-core machines
+</li><li>Allow for distributed processing on a network
+</li></ul><p>
+2. Image masking
+</p>
+<ul><li>Line and arc based image masking
+</li><li>"Snap" CAD-like drawing for image masking
+</li></ul><h3 id="ProcessingSchemes">Processing Schemes</h3>
+<p>
+1. Image deformation
+</p>
+<ul><li>1st order
+</li><li>2nd order
+</li></ul><p>
+2. Direct correlation
+</p>
+<p>
+3. Rectangular grid
+</p>
+<ul><li>Function that does 2D-FFT on rectangular domain
+</li><li>Function that does 2D correlation on rectangular domain based on 2D-FFT
+</li><li>connect your function to the GUI (see project above)
+</li></ul><h3 id="InputOutput">Input/Output</h3>
+<p>
+1. HDF5 output (and input for vector display)
+</p>
+<p>
+2. Cross-platform image pair extraction from common video formats
+</p>
