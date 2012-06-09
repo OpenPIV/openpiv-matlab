@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Openpiv-matlab : Matlab version of the OpenPIV project (open source Particle Image Velocimetry)" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Openpiv-matlab</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/OpenPIV/openpiv-matlab">View on GitHub</a>
+
+          <h1 id="project_title">Openpiv-matlab</h1>
+          <h2 id="project_tagline">Matlab version of the OpenPIV project (open source Particle Image Velocimetry)</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/OpenPIV/openpiv-matlab/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/OpenPIV/openpiv-matlab/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h1 id='frequently_asked_questions_about_openpiv_semantics'>Frequently Asked Questions about OpenPIV semantics</h1>
+
+<h2 id='important_parameters'>Important parameters</h2>
+
+<h3 id='_or__or__parameter'><code>sclt</code> or <code>scale</code> or <code>scaling</code> parameter:</h3>
+
+<p>This is a conversion constant from pixel/$\Delta$t displacement to the velocity units. E.g. if the time between the two consecutive image is 0.5 seconds and 1 pixel in the image corresponds to 50 cm, the value of <code>sclt</code> would be:</p>
+
+<p>PIV gives displacement in pixels, therefore first multiply the displacement in pixels by the scaling of cm/pixel, i.e. by 50 cm/pixel. To know the speed, the displacement is divided by the time separation, i.e. by 0.5 seconds, then we get: scaling = sclt = 50 cm/pixels / 0.5 = 100 (cm/seconds/pixels]</p>
+
+<p>For example, if the vector is 10 pixels, then the result will be 100 * 10 = 1000 cm/s</p>
+
+<h3 id='_not_existing_in_gui_version'><code>crop vector</code> not existing in GUI version</h3>
+
+<p>This is a vector that includes a number of rows or columns of interrogation windows to crop from the borders of the image. For example, if I do 32 x 32 interrogation windows and I want to remove the top 100 pixels, I use <code>crop_vector = [0 3 0 0]</code></p>
+
+<p>i.e. (3 x 32 = 96 pixels).</p>
+
+<h3 id='sn_type'>S/N type:</h3>
+
+<p>1 - peak-to-mean = the ratio of the peak in the correlation plan to the mean of the correlation window is estimated 2 - peak-to-peak = the ratio of the first peak to the second peak is estimated</p>
+
+<h3 id='sn_value'>S/N value:</h3>
+
+<p>this is a threshold of the S/N type, above which the vector is accepted or rejected if S/N type value is below the threshold</p>
+
+<h3 id='outlier_filter'>Outlier filter:</h3>
+
+<p>a threshold of the velocity in the point of interest as compared to the neighbors - above this value the velocity vector is rejected</p>
+
+<h3 id='jump'>Jump:</h3>
+
+<p>1 - if you use every second image or every pair N - if you want to correlate image i with image i+N, e.g. useful for oversampled cases and for time-resolved PIV analysis</p>
+
+<h2 id='general_piv_questions'>General PIV questions:</h2>
+
+<h3 id='whats_the_purpose_of_the_local_and_global_filtering'>Whats the purpose of the local and global filtering?</h3>
+
+<p>Global filtering supposingly removes the obvious outliers, i.e. the vectors which length is different from the mean of the flow field by at least 3 times its standard deviation. These are global outliers in the statistical sense.</p>
+
+<p>Local filtering is performed on small neighborhoods of vectors, e.g. 3 x 3 or 5 x 5, in order to find local outliers - the vectors that are dissimilar from the close neighbors. Typically there are about 5 per-cent of erroneous vectors and these are removed and later the missing values are interpolated from the neighbor vector values. This is also a reason for the Matlab version to generate three lists of files: Raw data in <code>_noflt.txt</code> Filtered (after global and local filters) - <code>_flt.txt</code> Filtered and interpolated data - <code>.txt</code></p>
+
+<h3 id='in_the__function_why_the_average_value_of_the_pixels_are_subtracted'>In the <code>cross_correlate</code> function, why the average value of the pixels are subtracted</h3>
+
+<p>from the sub images (<code>a2,b2</code>): a2 = a2 - mean2(a2); b2 = b2 - mean2(b2);</p>
+
+<p>This is well described in the book by Raffel et al. (2007) and others. In one sentence, if your images have not absolutely black background (zero), then the background (which is a kind of noise) contributes to the correlation and this is undesirable. you&#8217;re welcome to change it and check. maybe in some cases it is not true. I didn&#8217;t find such a case.</p>
+
+<h3 id='also_in_the_same_function_while_taking_the_fft'>Also in the same function while taking the FFT:</h3>
+
+<pre><code>ffta = fft2(a2,Nfft,Nfft);            
+fftb = fft2(b2,Nfft,Nfft);</code></pre>
+
+<p>why the size has been specified as Nfft which is twice the interrogation window size.</p>
+
+<p>In PIV correlation analysis is applied to finite size windows therefore, the input <code>Nfft</code> is given to create first padding of the window with zeros followed by correlation.</p>
+
+<h3 id='why_sub_image__is_rotated_before_taking_the_correlation'>Why sub image <code>b2</code> is rotated before taking the correlation</h3>
+
+<pre><code>b2 = b2(end:-1:1,end:-1:1);</code></pre>
+
+<p>Without rotation the inverse FFT of the product of two FFTs gives a convolution. Correlation needs a conjugate term, therefore:</p>
+
+<pre><code>ifft( fft(a) x fft(conj(b)) )	</code></pre>
+
+<p>For images <code>conj ( )</code> is replaced by rotation in the case of real values. It is more computationally efficient.</p>
+
+<h3 id='in_the__function_for_finding__why_neighbourhood_pixels'>In the <code>find_displacement(c,s2nm)</code> function for finding <code>peak2</code>, why neighbourhood pixels</h3>
+
+<p>around <code>peak1</code> are removed?</p>
+
+<p>We need to search for the &#8220;real&#8221; second peak that is not a part of the same first <code>peak1</code> hey appear as &#8216;false second peak&#8217;, but they are the part <br /></p>
+
+<h3 id='the__files_contain_the_variable__is_it_in_metressecond'>The <code>.txt</code> files contain the variable <code>vel</code>. Is it in metres/second?</h3>
+
+<p>It is not in general case, it depends on the <code>scaling</code> or <code>sclt</code> variable. If it&#8217;s 1, then it <code>vel</code> is still in pixels/dt</p>
+      
+         </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Openpiv-matlab maintained by <a href="https://github.com/OpenPIV">OpenPIV</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
