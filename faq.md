@@ -124,13 +124,12 @@ it `vel` is still in pixels/dt
 
 
 
-= How to read OpenPIV files =
+## How to read OpenPIV files 
 
 OpenPIV files are simple ASCII files with the 5 columns:
 
-{{{
-x, y, u, v, signal-to-noise-ratio
-}}}
+
+	x, y, u, v, signal-to-noise-ratio
 
 If you're going to analyze multiple PIV files, we recommend the two options:
 
@@ -139,16 +138,17 @@ If you're going to analyze multiple PIV files, we recommend the two options:
 
 For the option 2, we prepared a small Matlab utility function that converts OpenPIV (for Matlab and other software) files into PIVMAT compatible structure. Warning - it assumes that the proper scaling was applied during the OpenPIV run and the data is stored in mm/sec and mm units. If it's not, please, apply scaling manually by adding the lines:
 
-{{{
+
     v(i).x = unique(tmp(:,1)).'; % reshape(tmp.data(:,2),lx,ly);
     v(i).y = unique(tmp(:,2)).'; % reshape(tmp.data(:,3),lx,ly);
     v(i).vx = reshape(tmp(:,3),lx,ly);
     v(i).vy = reshape(tmp(:,4),lx,ly);
-}}}
 
-=== The function '''loadOpenPIVTXT.m''' ===
 
-{{{
+### The function '''loadOpenPIVTXT.m''' 
+
+<pre><code>
+
 function [v] = loadopenpivtxt(dirname,type)
 %LOADOPENPIVTXT  Loads vector fields created by OpenPIV (www.openpiv.net)
 %   software.
@@ -278,15 +278,12 @@ switch type
 end
 cd(wd);
 end
-}}}
+
+</code></pre>
+
+
 Easy to use with PIVMAT, e.g. animate your flow fields by:
 
-{{{
-showf(loadopenpivtxt('.','txt'))
-}}}
+	showf(loadopenpivtxt('.','txt'))
 
-The output is something like:
 
-[[Image(MiscWikiFiles:readopenpivtxt.png, width=487, height=365, align=center)]]
-
-Best OpenPIVing ...
