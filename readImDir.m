@@ -1,7 +1,6 @@
 function varargout = readImDir(varargin)
 
 
-
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
@@ -248,38 +247,20 @@ update_gui(hObject,[],handles);
 
 function update_gui(hObject, eventdata, handles)
 % Self made UPDATE GUI function
-if isdir(handles.path)
-    set(handles.edit_path,'String',handles.path);
-    handles.files = dir(fullfile(handles.path,'*.bmp'));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpg')));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpeg')));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tif')));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tiff')));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.png')));
-%     if ismac
-%         handles.files = dir(fullfile(handles.path,'*.BMP'));
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPG')));
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPEG')));
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIF')));
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIFF')));
-%     end
-else
+
+exts = {'bmp','jpg','jpeg','tif','tiff','png'};
+exts = cat(2,exts,upper(exts));
+
+
+if ~isdir(handles.path)
     handles.path = cd;
-    set(handles.edit_path,'String',handles.path);
-    handles.files = dir(fullfile(handles.path,'*.bmp'));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpg')));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpeg')));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tif')));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tiff')));
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.png')));
-%     if ismac
-%         handles.files = dir(fullfile(handles.path,'*.BMP'));
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPG')));
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.JPEG')));
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIF')));
-%         handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.TIFF')));
-%     end
 end
+set(handles.edit_path,'String',handles.path);
+handles.files = [];
+for i = 1:length(exts)
+    handles.files = cat(1,handles.files,dir(fullfile(handles.path,['*.',exts{i}])));
+end
+
 list = dir(handles.path);
 ind = find(cat(1,list.isdir));
 set(handles.fig,'SelectionType','normal');
