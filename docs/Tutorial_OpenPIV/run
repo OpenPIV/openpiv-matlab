@@ -1,0 +1,6 @@
+pdflatex Tutorial_OpenPIV.tex
+bibtex Tutorial_OpenPIV
+pdflatex Tutorial_OpenPIV.tex
+pdflatex Tutorial_OpenPIV.tex
+
+pdfopen --file Tutorial_OpenPIV.pdf

@@ -396,11 +396,11 @@ try
     if length(size(tmp)) == 3
         tmp = rgb2gray(tmp);
     end
-    imshow(prepfun(tmp));
+    imshow(prepfun(tmp),[]);
 catch
     tmp = tiffread2(fullfile(handles.path,handles.files{1}));
     tmp = im2double(tmp.data);
-    imshow(prepfun(tmp));
+    imshow(prepfun(tmp),[]);
 end
 set(handles.prev_image,'Visible','On');
 set(handles.next_image,'Visible','On');
@@ -531,12 +531,16 @@ switch handles.filesType
                         resind = resind + 1;
                         res(resind,:) = [x y u v s2n];
                         % quiver(x+cropvec(1),y+cropvec(2),u,v,'y');
+                        
+                        
                         if u ~= 0 || v ~= 0
                             %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                             %                             drawnow;
                             plotarrow(x,y,u,v,'y',2);
                             drawnow
                         end
+                        
+                        
                     end
                 end
             end
@@ -772,8 +776,8 @@ switch handles.filesType
             % Only for final, filtered and interpolated data
             %    imshow(a,[]);
             %    hold on
-            %             quiverm(res,2,'g','LineWidth',1);
-            %             drawnow
+                         quiverm(res,2,'g','LineWidth',1);
+                         drawnow
             %    F(:,fileind) = getframe;
             hold off;
         end
