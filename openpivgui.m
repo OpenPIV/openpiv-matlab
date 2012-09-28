@@ -536,8 +536,8 @@ switch handles.filesType
                         if u ~= 0 || v ~= 0
                             %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                             %                             drawnow;
-                            plotarrow(x,y,u,v,'y',2);
-                            drawnow
+                            % plotarrow(x,y,u,v,'y',2);
+                            % drawnow
                         end
                         
                         
@@ -617,8 +617,8 @@ switch handles.filesType
             % Only for final, filtered and interpolated data
             %    imshow(a,[]);
             %    hold on
-            %             quiverm(res,2,'g','LineWidth',1);
-            %             drawnow
+                         quiverm(res,2,'g','LineWidth',1);
+                         drawnow
             %    F(:,fileind) = getframe;
             hold off;
         end
@@ -692,9 +692,9 @@ switch handles.filesType
                     if u ~= 0 || v ~= 0
                         %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                         %                             drawnow;
-                        plotarrow(x,y,u,v,'y',2);
+                        % plotarrow(x,y,u,v,'y',2);
                         % draw_arrow([x,y],[x+u,y+v],20)
-                        drawnow
+                        % drawnow
                     end
                 end
             end
