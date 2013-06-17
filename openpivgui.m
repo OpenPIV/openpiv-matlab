@@ -24,6 +24,8 @@ function varargout = openpivgui(varargin)
 
 % Last Modified by GUIDE v2.5 11-Mar-2012 01:52:15
 
+path(path,pwd); % added by Alex on 17.6.2013 to resolve "run from the windows shell bug"
+
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
