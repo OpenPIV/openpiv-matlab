@@ -1126,22 +1126,12 @@ function prev_image_Callback(hObject, eventdata, handles)
 % hObject    handle to prev_image (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-axes(handles.axes1)
+axes(handles.axes1);
 filenum = str2num(get(handles.edit_num,'String'));
 filenum = max(1,filenum - 1);
 set(handles.edit_num,'String',int2str(filenum));
 % imshow(fullfile(handles.path,handles.files{1}));
-tmp = imread(fullfile(handles.path,handles.files{filenum}));
-if length(size(tmp)) == 3
-    tmp = rgb2gray(tmp);
-end
-preprocess = get(handles.checkbox_preprocess,'Value');
-if preprocess
-    prepfun = str2func(handles.preprocess);
-else
-    prepfun = inline('x');
-end
-imshow(prepfun(tmp));
+imshow(openpiv_imread(handles,filenum));
 guidata(hObject, handles);
 
 
@@ -1152,22 +1142,11 @@ function next_image_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.axes1)
+axes(handles.axes1);
 filenum = str2num(get(handles.edit_num,'String'));
 filenum = min(filenum + 1,length(handles.files));
 set(handles.edit_num,'String',int2str(filenum));
-% imshow(fullfile(handles.path,handles.files{1}));
-tmp = imread(fullfile(handles.path,handles.files{filenum}));
-if length(size(tmp)) == 3
-    tmp = rgb2gray(tmp);
-end
-preprocess = get(handles.checkbox_preprocess,'Value');
-if preprocess
-    prepfun = str2func(handles.preprocess);
-else
-    prepfun = inline('x');
-end
-imshow(prepfun(tmp));
+imshow(openpiv_imread(handles,filenum));
 guidata(hObject, handles);
 
 
@@ -1342,3 +1321,19 @@ function wiki_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 web('http://sourceforge.net/apps/trac/openpiv/wiki', '-new');
+
+
+function im = openpiv_imread(handles,filenum)
+im = imread(fullfile(handles.path,handles.files{filenum}));
+if length(size(im)) == 3
+    im = rgb2gray(im);
+end
+preprocess = get(handles.checkbox_preprocess,'Value');
+if preprocess
+    prepfun = str2func(handles.preprocess);
+else
+    prepfun = inline('x');
+end
+im = prepfun(im);
+% imshow(prepfun(tmp));
+
