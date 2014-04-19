@@ -383,25 +383,28 @@ axes(handles.axes1);
 set(handles.axes1,'visible','off');
 set(handles.axes1,'Units','pixels');
 
-preprocess = get(handles.checkbox_preprocess,'Value');
-if preprocess
-    prepfun = str2func(handles.preprocess);
-else
-    prepfun = inline('imadjust(x)');
-end
+% preprocess = get(handles.checkbox_preprocess,'Value');
+% if preprocess
+%     prepfun = str2func(handles.preprocess);
+% else
+%     prepfun = inline('imadjust(x)');
+% end
+% 
+% try
+%     % imshow(fullfile(handles.path,handles.files{1}));
+%     tmp = imread(fullfile(handles.path,handles.files{1}));
+%     if length(size(tmp)) == 3
+%         tmp = rgb2gray(tmp);
+%     end
+%     imshow(prepfun(tmp));
+% catch
+%     tmp = tiffread2(fullfile(handles.path,handles.files{1}));
+%     tmp = im2double(tmp.data);
+%     imshow(prepfun(tmp));
+% end
 
-try
-    % imshow(fullfile(handles.path,handles.files{1}));
-    tmp = imread(fullfile(handles.path,handles.files{1}));
-    if length(size(tmp)) == 3
-        tmp = rgb2gray(tmp);
-    end
-    imshow(prepfun(tmp));
-catch
-    tmp = tiffread2(fullfile(handles.path,handles.files{1}));
-    tmp = im2double(tmp.data);
-    imshow(prepfun(tmp));
-end
+im = openpiv_imread(handles,1);
+imshow(im);
 set(handles.prev_image,'Visible','On');
 set(handles.next_image,'Visible','On');
 handles = ReadImageDirectory(handles);
@@ -1324,16 +1327,31 @@ web('http://sourceforge.net/apps/trac/openpiv/wiki', '-new');
 
 
 function im = openpiv_imread(handles,filenum)
-im = imread(fullfile(handles.path,handles.files{filenum}));
+% openpiv_imread encapsulates all the image reading functions
+% that can be imread for 'jpg','bmp', etc. or 'tiffread2' for TIFF
+% images from Insight (tm) 
+% Usage:
+% >>  im = openpiv_imread(handles,file_number);
+% >>  imshow(im);
+
+try 
+    im = imread(fullfile(handles.path,handles.files{filenum}));
+catch
+    tmp = tiffread2(fullfile(handles.path,handles.files{filenum}));
+    im = im2double(tmp.data);
+end
+
 if length(size(im)) == 3
     im = rgb2gray(im);
 end
+
+% Custom pre-processing of images, default = 'imadjust'
 preprocess = get(handles.checkbox_preprocess,'Value');
 if preprocess
     prepfun = str2func(handles.preprocess);
 else
-    prepfun = inline('x');
+    prepfun = inline('imadjust(x)');
 end
 im = prepfun(im);
-% imshow(prepfun(tmp));
+
 
