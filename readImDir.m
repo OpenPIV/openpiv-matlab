@@ -37,7 +37,7 @@ handles.output = hObject;
 
 if exist('lastpath.mat','file')
     load('lastpath.mat');
-    if exist(lastpath,'dir')
+    if exist('lastpath','var') && exist(lastpath,'dir')
         handles.path = lastpath;
     else
         handles.path = pwd;

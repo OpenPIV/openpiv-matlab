@@ -22,7 +22,7 @@ function varargout = openpivgui(varargin)
 
 % Edit the above text to modify the response to help openpivgui
 
-% Last Modified by GUIDE v2.5 11-Mar-2012 01:52:15
+% Last Modified by GUIDE v2.5 13-May-2014 20:38:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1353,5 +1353,3 @@ else
     prepfun = inline('imadjust(x)');
 end
 im = prepfun(im);
-
-
