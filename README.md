@@ -37,7 +37,7 @@ Use http://www.openpiv.net/downloads.html for the shortcuts to the zipped softwa
 
 ### Support and documentation  
 How to get support? Where to ask questions? Use one of the following:  
-1. Sourceforge.net forums https://sourceforge.net/projects/openpiv/support   
+1. Google group https://groups.google.com/forum/#!forum/openpiv-users   
 2. e-mail to openpiv2008@gmail.com  
 3. Comment using Github page  
 
