@@ -22,9 +22,7 @@ function varargout = openpivgui(varargin)
 
 % Edit the above text to modify the response to help openpivgui
 
-% Last Modified by GUIDE v2.5 11-Mar-2012 01:52:15
-
-path(path,pwd); % added by Alex on 17.6.2013 to resolve "run from the windows shell bug"
+% Last Modified by GUIDE v2.5 13-May-2014 20:38:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -385,25 +383,28 @@ axes(handles.axes1);
 set(handles.axes1,'visible','off');
 set(handles.axes1,'Units','pixels');
 
-preprocess = get(handles.checkbox_preprocess,'Value');
-if preprocess
-    prepfun = str2func(handles.preprocess);
-else
-    prepfun = inline('imadjust(x)');
-end
+% preprocess = get(handles.checkbox_preprocess,'Value');
+% if preprocess
+%     prepfun = str2func(handles.preprocess);
+% else
+%     prepfun = inline('imadjust(x)');
+% end
+% 
+% try
+%     % imshow(fullfile(handles.path,handles.files{1}));
+%     tmp = imread(fullfile(handles.path,handles.files{1}));
+%     if length(size(tmp)) == 3
+%         tmp = rgb2gray(tmp);
+%     end
+%     imshow(prepfun(tmp));
+% catch
+%     tmp = tiffread2(fullfile(handles.path,handles.files{1}));
+%     tmp = im2double(tmp.data);
+%     imshow(prepfun(tmp));
+% end
 
-try
-    % imshow(fullfile(handles.path,handles.files{1}));
-    tmp = imread(fullfile(handles.path,handles.files{1}));
-    if length(size(tmp)) == 3
-        tmp = rgb2gray(tmp);
-    end
-    imshow(prepfun(tmp),[]);
-catch
-    tmp = tiffread2(fullfile(handles.path,handles.files{1}));
-    tmp = im2double(tmp.data);
-    imshow(prepfun(tmp),[]);
-end
+im = openpiv_imread(handles,1);
+imshow(im);
 set(handles.prev_image,'Visible','On');
 set(handles.next_image,'Visible','On');
 handles = ReadImageDirectory(handles);
@@ -533,16 +534,12 @@ switch handles.filesType
                         resind = resind + 1;
                         res(resind,:) = [x y u v s2n];
                         % quiver(x+cropvec(1),y+cropvec(2),u,v,'y');
-                        
-                        
                         if u ~= 0 || v ~= 0
                             %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                             %                             drawnow;
-                            % plotarrow(x,y,u,v,'y',2);
+                            plotarrow(x,y,u,v,'g',10);
                             % drawnow
                         end
-                        
-                        
                     end
                 end
             end
@@ -619,8 +616,8 @@ switch handles.filesType
             % Only for final, filtered and interpolated data
             %    imshow(a,[]);
             %    hold on
-                         quiverm(res,2,'g','LineWidth',1);
-                         drawnow
+            %             quiverm(res,2,'g','LineWidth',1);
+            %             drawnow
             %    F(:,fileind) = getframe;
             hold off;
         end
@@ -694,7 +691,7 @@ switch handles.filesType
                     if u ~= 0 || v ~= 0
                         %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                         %                             drawnow;
-                        % plotarrow(x,y,u,v,'y',2);
+                        plotarrow(x,y,u,v,'g',10);
                         % draw_arrow([x,y],[x+u,y+v],20)
                         % drawnow
                     end
@@ -778,8 +775,8 @@ switch handles.filesType
             % Only for final, filtered and interpolated data
             %    imshow(a,[]);
             %    hold on
-                         quiverm(res,2,'g','LineWidth',1);
-                         drawnow
+            %             quiverm(res,2,'g','LineWidth',1);
+            %             drawnow
             %    F(:,fileind) = getframe;
             hold off;
         end
@@ -1132,22 +1129,12 @@ function prev_image_Callback(hObject, eventdata, handles)
 % hObject    handle to prev_image (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-axes(handles.axes1)
+axes(handles.axes1);
 filenum = str2num(get(handles.edit_num,'String'));
 filenum = max(1,filenum - 1);
 set(handles.edit_num,'String',int2str(filenum));
 % imshow(fullfile(handles.path,handles.files{1}));
-tmp = imread(fullfile(handles.path,handles.files{filenum}));
-if length(size(tmp)) == 3
-    tmp = rgb2gray(tmp);
-end
-preprocess = get(handles.checkbox_preprocess,'Value');
-if preprocess
-    prepfun = str2func(handles.preprocess);
-else
-    prepfun = inline('x');
-end
-imshow(prepfun(tmp));
+imshow(openpiv_imread(handles,filenum));
 guidata(hObject, handles);
 
 
@@ -1158,22 +1145,11 @@ function next_image_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.axes1)
+axes(handles.axes1);
 filenum = str2num(get(handles.edit_num,'String'));
 filenum = min(filenum + 1,length(handles.files));
 set(handles.edit_num,'String',int2str(filenum));
-% imshow(fullfile(handles.path,handles.files{1}));
-tmp = imread(fullfile(handles.path,handles.files{filenum}));
-if length(size(tmp)) == 3
-    tmp = rgb2gray(tmp);
-end
-preprocess = get(handles.checkbox_preprocess,'Value');
-if preprocess
-    prepfun = str2func(handles.preprocess);
-else
-    prepfun = inline('x');
-end
-imshow(prepfun(tmp));
+imshow(openpiv_imread(handles,filenum));
 guidata(hObject, handles);
 
 
@@ -1348,3 +1324,32 @@ function wiki_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 web('http://sourceforge.net/apps/trac/openpiv/wiki', '-new');
+
+
+function im = openpiv_imread(handles,filenum)
+% openpiv_imread encapsulates all the image reading functions
+% that can be imread for 'jpg','bmp', etc. or 'tiffread2' for TIFF
+% images from Insight (tm) 
+% Usage:
+% >>  im = openpiv_imread(handles,file_number);
+% >>  imshow(im);
+
+try 
+    im = imread(fullfile(handles.path,handles.files{filenum}));
+catch
+    tmp = tiffread2(fullfile(handles.path,handles.files{filenum}));
+    im = im2double(tmp.data);
+end
+
+if length(size(im)) == 3
+    im = rgb2gray(im);
+end
+
+% Custom pre-processing of images, default = 'imadjust'
+preprocess = get(handles.checkbox_preprocess,'Value');
+if preprocess
+    prepfun = str2func(handles.preprocess);
+else
+    prepfun = inline('imadjust(x)');
+end
+im = prepfun(im);

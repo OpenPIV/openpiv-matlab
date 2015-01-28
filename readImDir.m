@@ -1,6 +1,7 @@
 function varargout = readImDir(varargin)
 
 
+
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
@@ -36,7 +37,7 @@ handles.output = hObject;
 
 if exist('lastpath.mat','file')
     load('lastpath.mat');
-    if exist(lastpath,'dir')
+    if exist('lastpath','var') && exist(lastpath,'dir')
         handles.path = lastpath;
     else
         handles.path = pwd;
@@ -70,7 +71,7 @@ if isfield(handles,'filenames')
     %     varargout{3} = handles.dT*handles.step;
     %     varargout{4} = handles.scale;
     %     varargout{5} = handles.state3d;
-
+    
 else
     varargout{1} = {};
     varargout{2} = {};
@@ -92,7 +93,7 @@ jump = 1;
 if isempty(handles.index_selected) | min(handles.index_selected) < 3
     errordlg('Wrong selection','Incorrect Selection','modal')
 else
-
+    
     switch length(handles.index_selected)
         case {1}                        % only the first file is selected,
             index = handles.index_selected;
@@ -100,20 +101,20 @@ else
         case {2}
             index = handles.index_selected; %
             handles.filenames = handles.list_entries(index(1:jump:end));
-
+            
         otherwise
             handles.filenames = handles.list_entries(handles.index_selected(1:jump:end));
-
+            
     end
-
+    
     try
         lastpath = handles.path;
-
+        
         save('lastpath.mat','lastpath');
     catch
         ;
     end
-
+    
     guidata(hObject,handles);
     uiresume(handles.fig);
 end
@@ -247,24 +248,30 @@ update_gui(hObject,[],handles);
 
 function update_gui(hObject, eventdata, handles)
 % Self made UPDATE GUI function
-
-exts = {'bmp','jpg','jpeg','tif','tiff','png'};
-exts = cat(2,exts,upper(exts));
-
-
+image_files = {'jpg','bmp','jpeg','tif','tiff','png'};
 if ~isdir(handles.path)
     handles.path = cd;
 end
-set(handles.edit_path,'String',handles.path);
-handles.files = [];
-for i = 1:length(exts)
-    handles.files = cat(1,handles.files,dir(fullfile(handles.path,['*.',exts{i}])));
-end
 
+set(handles.edit_path,'String',handles.path);
 list = dir(handles.path);
+handles.files = {};
+for i = 1:length(list)
+    if ismember(lower(getext(list(i).name)),image_files)
+        handles.files = cat(1,handles.files,list(i).name);
+    end
+end
+%     handles.files = dir(fullfile(handles.path,'*.bmp'));
+%     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpg')));
+%     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.jpeg')));
+%     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tif')));
+%     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.tiff')));
+%     handles.files = cat(1,handles.files,dir(fullfile(handles.path,'*.png')));
+
+% list = dir(handles.path);
 ind = find(cat(1,list.isdir));
 set(handles.fig,'SelectionType','normal');
-set(handles.listbox_files,'String',{list(ind).name,handles.files.name},'Value',1);
+set(handles.listbox_files,'String',{list(ind).name,handles.files{:}},'Value',1);
 guidata(handles.fig, handles);
 
 
