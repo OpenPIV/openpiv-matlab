@@ -22,7 +22,7 @@ Use http://www.openpiv.net/downloads.html for the shortcuts to the zipped softwa
 2. Visit our Git repositories through https://github.com/OpenPIV  
 3. Fork your favorite repository  
 4. Fix, commit, push to your repository and send us a pull request.   
-5. register on openpiv-develop mailing list through http://sf.net/projects/openpiv  
+5. register on openpiv-develop mailing list through https://groups.google.com/forum/#!forum/openpiv-users 
 
 
 
