@@ -501,7 +501,7 @@ switch handles.filesType
             % imshow(imadjust(a),[]);
             imshow(prepfun(a),[]);
             hold on
-            
+                        
             for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
                 for k = 1:ovlapHor:horSize-ittWidth+1 % horizontally
                     if (get(hObject,'UserData') == 1)
@@ -516,8 +516,10 @@ switch handles.filesType
                         if ~any(c(:)), % completely "black"
                             u = 0;
                             v = 0;
-                            y = origin(1) + m + ittHeight/2 - 1;
-                            x = origin(2) + k + ittWidth/2 -  1;
+                            y = origin(2) + m + ittHeight/2 - 1;
+                            x = origin(1) + k + ittWidth/2 -  1;
+                            resind = resind + 1;
+                            res(resind,:) = [x y u v s2n];
                             continue
                         end
                         
@@ -1315,7 +1317,7 @@ function github_Callback(hObject, eventdata, handles)
 % hObject    handle to github (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-web('http://alexlib.github.com/openpiv-matlab', '-new');
+web('http://openpiv.github.com/openpiv-matlab', '-new');
 
 
 % --------------------------------------------------------------------
