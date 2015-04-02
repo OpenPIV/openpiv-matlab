@@ -439,7 +439,11 @@ outl = str2double(get(handles.edit_outl,'string'));
 
 preprocess = get(handles.checkbox_preprocess,'Value');
 if preprocess
-    prepfun = str2func(handles.preprocess);
+    if ~isfield(handles,'preprocess')
+        prepfun = inline('x');
+    else
+        prepfun = str2func(handles.preprocess);
+    end
 else
     prepfun = inline('x');
 end
