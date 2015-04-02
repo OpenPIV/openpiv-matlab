@@ -523,6 +523,7 @@ switch handles.filesType
                             y = origin(2) + m + ittHeight/2 - 1;
                             x = origin(1) + k + ittWidth/2 -  1;
                             resind = resind + 1;
+                            s2n = -999; 
                             res(resind,:) = [x y u v s2n];
                             continue
                         end
