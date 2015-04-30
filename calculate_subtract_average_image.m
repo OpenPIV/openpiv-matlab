@@ -10,24 +10,31 @@
 % Author: Alex Liberzon
 % Copyright (c) 1999 alex.liberzon@gmail.com
 
-directory = uigetdir('Directory to read images from');
-curdir = cd;
-try 
-cd(directory);
-mkdir(directory,'test');
-newdir = [directory,filesep,'test'];
 
-d = dir('*.tif');
-a = im2double(imread(d(1).name)); 
+
+
+% d = dir('*.tif');
+[d,pth] = readImdir; % use the OpenPIV function with GUI
+
+success = mkdir(pth,'test');
+if success 
+    newdir = fullfile(pth,'test');
+else
+    error('new directory is not created')
+end
+
+a = im2double(imread(fullfile(pth,d{1})));
+
 for i = 2:length(d)
-    a = imadd(a,im2double(imread(d(i).name))); 
-end; 
+    imfile = fullfile(pth,d{i});
+    a = imadd(a,medfilt2(im2double(imread(imfile)))); 
+end
+
 averageImage = a/length(d);
-imwrite(averageImage,'average.jpg','jpg');
+imwrite(averageImage,fullfile(newdir,'average.jpg'),'jpg');
 
 for i = 1:length(d)
-    imwrite(imsubtract(im2double(imread(d(i).name)),averageImage),[newdir,filesep,d(i).name],'tiff');
-end; 
-catch
-    cd(curdir);
+    imfile = fullfile(pth,d{i});
+    newfile = fullfile(newdir,d{i});
+    imwrite(imsubtract(im2double(imread(imfile)),averageImage),newfile);
 end

@@ -1271,6 +1271,6 @@ preprocess = get(handles.checkbox_preprocess,'Value');
 if preprocess
     prepfun = str2func(handles.preprocess);
 else
-    prepfun = inline('imadjust(x)');
+    prepfun = inline('imadjust(x)'); % default is to stretch the image
 end
 im = prepfun(im);
