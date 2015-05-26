@@ -1236,7 +1236,7 @@ function github_Callback(hObject, eventdata, handles)
 % hObject    handle to github (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-web('http://openpiv.github.com/openpiv-matlab', '-new');
+web('http://www.openpiv.net/openpiv-matlab/', '-new');
 
 
 % --------------------------------------------------------------------
@@ -1244,7 +1244,7 @@ function wiki_Callback(hObject, eventdata, handles)
 % hObject    handle to wiki (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-web('http://sourceforge.net/apps/trac/openpiv/wiki', '-new');
+web('http://www.openpiv.net/faq.html', '-new');
 
 
 function im = openpiv_imread(handles,filenum)
