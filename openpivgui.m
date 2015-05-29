@@ -435,6 +435,7 @@ ovlapVer = str2double(contents{get(handles.popupmenu_ovlpVer,'Value')});
 s2ntype = get(handles.popupmenu_s2ntype,'value');
 s2nl = str2double(get(handles.edit_s2nl,'string'));
 sclt = str2double(get(handles.edit_scale,'string'));
+dt = str2double(get(handles.edit_dt,'string'));
 outl = str2double(get(handles.edit_outl,'string'));
 
 preprocess = get(handles.checkbox_preprocess,'Value');
@@ -530,11 +531,11 @@ switch handles.filesType
                         
                         [peak1,peak2,pixi,pixj] = find_displacement_rect(c,s2ntype);
                         
-                        [peakVer,peakHor,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,sclt,ittWidth,ittHeight);
+                        [peakVer,peakHor,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,ittWidth,ittHeight);
                         
                         % Scale the pixel displacement to the velocity
-                        u = (ittWidth-peakHor)*sclt;
-                        v = (ittHeight-peakVer)*sclt;
+                        u = (ittWidth-peakHor);
+                        v = (ittHeight-peakVer);
                         y = origin(2) + m + ittHeight/2-1;
                         x = origin(1) + k + ittWidth/2-1;
                         
@@ -556,6 +557,8 @@ switch handles.filesType
             % NO_FILT_RES will be stored in '.._noflt.txt' file at the end of program
             no_filt_res = res;
             
+            
+            
             % Reshape U and V matrices in two-dimensional grid and produce
             % velocity vector in U + i*V form (real and imaginary parts):
             
@@ -564,7 +567,7 @@ switch handles.filesType
             vector = u + sqrt(-1)*v;
             
             % Remove outlayers - GLOBAL FILTERING
-            vector(abs(vector)>mean(abs(vector(find(vector))))*outl) = 0;
+            vector(abs(vector)>mean(abs(vector(vector~=0)))*outl) = 0;
             u = real(vector);
             v = imag(vector);
             
@@ -579,8 +582,9 @@ switch handles.filesType
             % 2. For velocity vector length (and angle)
             % 3. OR OTHER.
             
-            lmtv = mean(tmpv(find(tmpv))) + 3*std(tmpv(find(tmpv)));
-            lmtu = mean(tmpu(find(tmpu))) + 3*std(tmpu(find(tmpu)));
+            lmtv = mean(tmpv(tmpv~=0)) + 3*std(tmpv(tmpv~=0));
+            lmtu = mean(tmpu(tmpu~=0)) + 3*std(tmpu(tmpu~=0));
+            
             u_out = find(tmpu>lmtu);
             v_out = find(tmpv>lmtv);
             
@@ -600,23 +604,44 @@ switch handles.filesType
             res(:,4) = reshape(imag(vector),numrows*numcols,1);
             
             
+            % scale the pixels and apply the dt
+            
+            if sclt ~= 0
+                res = res * sclt; % pixels to meters
+                no_filt_res = no_filt_res * sclt;
+                filt_res = filt_res * sclt;
+                xUnits = 'm';
+            else
+                xUnits = 'pix';
+            end
+            
+            if dt ~= 0
+                res(:,3:4) = res(:,3:4)/dt;
+                no_filt_res(:,3:4) = no_filt_res(:,3:4)/dt;
+                filt_res(:,3:4) = filt_res(:,3:4) /dt;
+                tUnits = 's';
+            else
+                tUnits = 'dt';
+            end
+                        
             % Save results as ASCII (text) files:
             % Final (filtered, interpolated) results
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'.txt'],'w');
+            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),baseext],'w');
             
             basename = handles.files{fileind}(1:end-4);
+            baseext = '.vec';
             
-            final = fullfile(handles.path,[basename,'.txt']);
-            write_openpiv_txt(final,res);
+            final = fullfile(handles.path,[basename,baseext]);
+            write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
             
             % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
             nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
-            write_openpiv_txt(nofilt,no_filt_res);
+            write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
             
 
             % Filtered, but not interpolated:
             filtered = fullfile(handles.path,[basename,'_flt.txt']);
-            write_openpiv_txt(filtered,filt_res); 
+            write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
             
             
             % Results visualization
@@ -684,11 +709,11 @@ switch handles.filesType
                     
                     [peak1,peak2,pixi,pixj] = find_displacement_rect(c,s2ntype);
                     
-                    [peakVer,peakHor,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,sclt,ittWidth,ittHeight);
+                    [peakVer,peakHor,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,ittWidth,ittHeight);
                     
                     % Scale the pixel displacement to the velocity
-                    u = (ittWidth-peakHor)*sclt;
-                    v = (ittHeight-peakVer)*sclt;
+                    u = (ittWidth-peakHor);
+                    v = (ittHeight-peakVer);
                     y = origin(2) + m + ittHeight/2-1;
                     x = origin(1) + k + ittWidth/2-1;
                     
@@ -759,23 +784,44 @@ switch handles.filesType
             res(:,4) = reshape(imag(vector),numrows*numcols,1);
             
             
+            % scale the pixels and apply the dt
+            
+            if sclt ~= 0
+                res = res * sclt; % pixels to meters
+                no_filt_res = no_filt_res * sclt;
+                filt_res = filt_res * sclt;
+                xUnits = 'm';
+            else
+                xUnits = 'pix';
+            end
+            
+            if dt ~= 0
+                res(:,3:4) = res(:,3:4)/dt;
+                no_filt_res(:,3:4) = no_filt_res(:,3:4)/dt;
+                filt_res(:,3:4) = filt_res(:,3:4) /dt;
+                tUnits = 's';
+            else
+                tUnits = 'dt';
+            end
+                        
             % Save results as ASCII (text) files:
             % Final (filtered, interpolated) results
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'.txt'],'w');
+            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),baseext],'w');
             
-            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'.txt']),'w');
-            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',res');
-            fclose(fid);
+            basename = handles.files{fileind}(1:end-4);
+            baseext = '.vec';
+            
+            final = fullfile(handles.path,[basename,baseext]);
+            write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
+            
             % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'_noflt.txt'],'w');
-            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'_noflt.txt']),'w');
-            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',no_filt_res');
-            fclose(fid);
+            nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
+            write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
+            
+
             % Filtered, but not interpolated:
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'_flt.txt'],'w');
-            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'_flt.txt']),'w');
-            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',filt_res');
-            fclose(fid);
+            filtered = fullfile(handles.path,[basename,'_flt.txt']);
+            write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
             
             
             % Results visualization
@@ -788,7 +834,7 @@ switch handles.filesType
             hold off;
         end
     otherwise
-        ;
+        
 end
 % end
 set(handles.figure1,'pointer','arrow')
