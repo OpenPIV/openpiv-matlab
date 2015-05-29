@@ -50,7 +50,7 @@ else
             while peak2 < max(max(c(x2-1:x2+1,y2-1:y2+1)))
                 peak2 = max(tmp(:));
                 [x2,y2] = find(tmp==peak2);
-                if x2 == 1 || y2==1 || x2 == NfftHeight || y2 == NfftWidth
+                if min(x2) == 1 || min(y2)==1 || max(x2) == NfftHeight || max(y2) == NfftWidth
                     peak2 = peak1;	% will throw this one out later
                     break;
                 end
