@@ -2,7 +2,7 @@ function varargout = openpivgui(varargin)
 % OPENPIVGUI M-file for openpivgui.fig
 %      OPENPIVGUI, by itself, creates a new OPENPIVGUI or raises the existing
 %      singleton*.
-%
+%re
 %      H = OPENPIVGUI returns the handle to a new OPENPIVGUI or the handle to
 %      the existing singleton*.
 %
