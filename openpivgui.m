@@ -604,19 +604,19 @@ switch handles.filesType
             % Final (filtered, interpolated) results
             % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'.txt'],'w');
             
-            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'.txt']),'w');
-            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',res');
-            fclose(fid);
+            basename = handles.files{fileind}(1:end-4);
+            
+            final = fullfile(handles.path,[basename,'.txt']);
+            write_openpiv_txt(final,res);
+            
             % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'_noflt.txt'],'w');
-            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'_noflt.txt']),'w');
-            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',no_filt_res');
-            fclose(fid);
+            nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
+            write_openpiv_txt(nofilt,no_filt_res);
+            
+
             % Filtered, but not interpolated:
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'_flt.txt'],'w');
-            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'_flt.txt']),'w');
-            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',filt_res');
-            fclose(fid);
+            filtered = fullfile(handles.path,[basename,'_flt.txt']);
+            write_openpiv_txt(filtered,filt_res); 
             
             
             % Results visualization
