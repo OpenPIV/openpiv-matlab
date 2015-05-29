@@ -1,35 +1,35 @@
-function varargout = openpivgui(varargin)
-% OPENPIVGUI M-file for openpivgui.fig
-%      OPENPIVGUI, by itself, creates a new OPENPIVGUI or raises the existing
+function varargout = openpivgui_export(varargin)
+% OPENPIVGUI_EXPORT M-file for openpivgui_export.fig
+%      OPENPIVGUI_EXPORT, by itself, creates a new OPENPIVGUI_EXPORT or raises the existing
 %      singleton*.
 %
-%      H = OPENPIVGUI returns the handle to a new OPENPIVGUI or the handle to
+%      H = OPENPIVGUI_EXPORT returns the handle to a new OPENPIVGUI_EXPORT or the handle to
 %      the existing singleton*.
 %
-%      OPENPIVGUI('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in OPENPIVGUI.M with the given input arguments.
+%      OPENPIVGUI_EXPORT('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in OPENPIVGUI_EXPORT.M with the given input arguments.
 %
-%      OPENPIVGUI('Property','Value',...) creates a new OPENPIVGUI or raises the
+%      OPENPIVGUI_EXPORT('Property','Value',...) creates a new OPENPIVGUI_EXPORT or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before openpivgui_OpeningFcn gets called.  An
+%      applied to the GUI before openpivgui_export_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to openpivgui_OpeningFcn via varargin.
+%      stop.  All inputs are passed to openpivgui_export_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help openpivgui
+% Edit the above text to modify the response to help openpivgui_export
 
-% Last Modified by GUIDE v2.5 29-May-2015 14:08:25
+% Last Modified by GUIDE v2.5 29-May-2015 14:52:30
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @openpivgui_OpeningFcn, ...
-    'gui_OutputFcn',  @openpivgui_OutputFcn, ...
+    'gui_OpeningFcn', @openpivgui_export_OpeningFcn, ...
+    'gui_OutputFcn',  @openpivgui_export_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,15 +44,15 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before openpivgui is made visible.
-function openpivgui_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before openpivgui_export is made visible.
+function openpivgui_export_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to openpivgui (see VARARGIN)
+% varargin   command line arguments to openpivgui_export (see VARARGIN)
 
-% Choose default command line output for openpivgui
+% Choose default command line output for openpivgui_export
 handles.output = hObject;
 movegui(hObject,'center');
 set(hObject,'Toolbar','None');
@@ -74,7 +74,7 @@ axis off
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = openpivgui_OutputFcn(hObject, eventdata, handles)
+function varargout = openpivgui_export_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -606,42 +606,39 @@ switch handles.filesType
             
             % scale the pixels and apply the dt
             
-            if sclt ~= 0
+            if sclt ~= 1
                 res = res * sclt; % pixels to meters
                 no_filt_res = no_filt_res * sclt;
                 filt_res = filt_res * sclt;
                 xUnits = 'm';
-            else
-                xUnits = 'pix';
+                uUnits = 'm/dt';
             end
             
             if dt ~= 0
                 res(:,3:4) = res(:,3:4)/dt;
                 no_filt_res(:,3:4) = no_filt_res(:,3:4)/dt;
                 filt_res(:,3:4) = filt_res(:,3:4) /dt;
-                tUnits = 's';
-            else
-                tUnits = 'dt';
+                uUnits = 'm/s';
             end
-                        
+                
+            
             % Save results as ASCII (text) files:
             % Final (filtered, interpolated) results
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),baseext],'w');
+            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'.txt'],'w');
             
             basename = handles.files{fileind}(1:end-4);
-            baseext = '.vec';
             
-            final = fullfile(handles.path,[basename,baseext]);
-            write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
+            final = fullfile(handles.path,[basename,'.txt']);
+            write_openpiv_txt(final,res);
             
             % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
             nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
-            write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
+            write_openpiv_txt(nofilt,no_filt_res);
             
 
             % Filtered, but not interpolated:
             filtered = fullfile(handles.path,[basename,'_flt.txt']);
-            write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
+            write_openpiv_txt(filtered,filt_res); 
             
             
             % Results visualization
@@ -784,44 +781,23 @@ switch handles.filesType
             res(:,4) = reshape(imag(vector),numrows*numcols,1);
             
             
-            % scale the pixels and apply the dt
-            
-            if sclt ~= 0
-                res = res * sclt; % pixels to meters
-                no_filt_res = no_filt_res * sclt;
-                filt_res = filt_res * sclt;
-                xUnits = 'm';
-            else
-                xUnits = 'pix';
-            end
-            
-            if dt ~= 0
-                res(:,3:4) = res(:,3:4)/dt;
-                no_filt_res(:,3:4) = no_filt_res(:,3:4)/dt;
-                filt_res(:,3:4) = filt_res(:,3:4) /dt;
-                tUnits = 's';
-            else
-                tUnits = 'dt';
-            end
-                        
             % Save results as ASCII (text) files:
             % Final (filtered, interpolated) results
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),baseext],'w');
+            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'.txt'],'w');
             
-            basename = handles.files{fileind}(1:end-4);
-            baseext = '.vec';
-            
-            final = fullfile(handles.path,[basename,baseext]);
-            write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
-            
+            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'.txt']),'w');
+            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',res');
+            fclose(fid);
             % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
-            nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
-            write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
-            
-
+            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'_noflt.txt'],'w');
+            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'_noflt.txt']),'w');
+            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',no_filt_res');
+            fclose(fid);
             % Filtered, but not interpolated:
-            filtered = fullfile(handles.path,[basename,'_flt.txt']);
-            write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
+            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),'_flt.txt'],'w');
+            fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'_flt.txt']),'w');
+            fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f\n',filt_res');
+            fclose(fid);
             
             
             % Results visualization
@@ -834,7 +810,7 @@ switch handles.filesType
             hold off;
         end
     otherwise
-        
+        ;
 end
 % end
 set(handles.figure1,'pointer','arrow')

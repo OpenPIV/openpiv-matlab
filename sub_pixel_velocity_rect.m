@@ -1,4 +1,4 @@
-function [peakx,peaky,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,sclt,ittWidth,ittHeight)
+function [peakx,peaky,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,ittWidth,ittHeight)
 % SUB_PIXEL_VELOCITY - Calculates Signal-To-Noise Ratio, fits Gaussian
 % bell, find sub-pixel displacement and scales it to the real velocity
 % according the the time interval and real-world-to-image-scale.
