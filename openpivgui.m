@@ -1246,21 +1246,33 @@ guidata(hObject,handles);
 
 % --------------------------------------------------------------------
 function handles = ReadImageDirectory(handles)
-firstDif = find(handles.files{2}-handles.files{1},1,'first'); % how the first two files are different?
-handles.filebase = handles.files{1}(1:firstDif-1); % base file name, e.g. bird_b00100
-fileType = handles.files{1}(firstDif:end-4); % without extension
-switch lower(fileType)
-    case{'a','_a','b','_b'}
-        handles.amount = length(handles.files); % pairs
-        handles.filesType = 'pairs';
-        handles.step = 2;
-        set(handles.edit_jump,'Enable','Off');
-        set(handles.edit_jump,'String','-1');
-    otherwise
-        handles.amount = length(handles.files);
-        handles.filesType = 'sequence';
-        handles.step = 1;
-        set(handles.edit_jump,'Enable','On');
+try
+    firstDif = find(handles.files{2}-handles.files{1},1,'first'); % how the first two files are different?
+    handles.filebase = handles.files{1}(1:firstDif-1); % base file name, e.g. bird_b00100
+    fileType = handles.files{1}(firstDif:end-4); % without extension
+    switch lower(fileType)
+        case{'a','_a','b','_b'}
+            handles.amount = length(handles.files); % pairs
+            handles.filesType = 'pairs';
+            handles.step = 2;
+            set(handles.edit_jump,'Enable','Off');
+            set(handles.edit_jump,'String','-1');
+        otherwise
+            handles.amount = length(handles.files);
+            handles.filesType = 'sequence';
+            handles.step = 1;
+            set(handles.edit_jump,'Enable','On');
+    end
+catch % dimagree % the two files do have a common filebase, just a pair
+    handles.filebase = 'tmp';
+    handles.amount = length(handles.files); % pairs
+    if handles.amount ~= 2
+        error('This file type is not handled to OpenPIV, rename files ');
+    end
+    handles.filesType = 'pairs';
+    handles.step = 2;
+    set(handles.edit_jump,'Enable','Off');
+    set(handles.edit_jump,'String','-1');
 end
 
 % handles.filebase = handles.files{1}(1:max(findstr(handles.files{1},'_'))-1);
