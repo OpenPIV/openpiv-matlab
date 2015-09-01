@@ -635,13 +635,13 @@ switch handles.filesType
             write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
             
             % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
-            nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
-            write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
+            % nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
+            % write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
             
 
             % Filtered, but not interpolated:
-            filtered = fullfile(handles.path,[basename,'_flt.txt']);
-            write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
+            % filtered = fullfile(handles.path,[basename,'_flt.txt']);
+            % write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
             
             
             % Results visualization
@@ -815,13 +815,13 @@ switch handles.filesType
             write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
             
             % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
-            nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
-            write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
+            % nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
+            % write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
             
 
             % Filtered, but not interpolated:
-            filtered = fullfile(handles.path,[basename,'_flt.txt']);
-            write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
+            % filtered = fullfile(handles.path,[basename,'_flt.txt']);
+            % write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
             
             
             % Results visualization
