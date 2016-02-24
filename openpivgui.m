@@ -545,12 +545,14 @@ switch handles.filesType
                         if u ~= 0 || v ~= 0
                             %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                             %                             drawnow;
-                            plotarrow(x,y,u,v,'g',10);
+                            plotarrow(x,y,u,v,'y',10);
                             % drawnow
                         end
                     end
                 end
+                drawnow
             end
+            
             no_filt_res = res;
             
             [res, filt_res] = openpiv_filter(res,numcols,numrows,outl);
@@ -558,8 +560,9 @@ switch handles.filesType
             imshow(prepfun(a),[]);
             hold on
             quiverm(res,'color','g','AutoScaleFactor',2);
-            ind = res(:,3) ~= no_filt_res(:,3);
-            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.5);
+            ind = (filt_res(:,3) ~= no_filt_res(:,3) | filt_res(:,4) ~= no_filt_res(:,4));
+            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
+            drawnow
             
             basename = handles.files{fileind}(1:end-4);
             baseext = '.vec';
@@ -639,11 +642,12 @@ switch handles.filesType
                     if u ~= 0 || v ~= 0
                         %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                         %                             drawnow;
-                        plotarrow(x,y,u,v,'g',10);
+                        plotarrow(x,y,u,v,'y',10);
                         % draw_arrow([x,y],[x+u,y+v],20)
                         % drawnow
                     end
                 end
+                drawnow
             end
             
             no_filt_res = res;
@@ -654,7 +658,8 @@ switch handles.filesType
             hold on
             quiverm(res,'color','g','AutoScaleFactor',2);
             ind = res(:,3) ~= no_filt_res(:,3);
-            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.5);
+            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
+            drawnow
             
             basename = handles.files{fileind}(1:end-4);
             baseext = '.vec';

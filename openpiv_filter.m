@@ -13,9 +13,13 @@ function [res, filt_res] = openpiv_filter(res,numcols,numrows,outl)
 % Reshape U and V matrices in two-dimensional grid and produce
 % velocity vector in U + i*V form (real and imaginary parts):
 
+
 u = reshape(res(:,3), numcols,numrows);
 v = reshape(res(:,4), numcols,numrows);
 vector = u + sqrt(-1)*v;
+
+vector(isnan(vector)) = 0;
+
 % vector = fill_holes(vector);
 
 % Remove outlayers - GLOBAL FILTERING
