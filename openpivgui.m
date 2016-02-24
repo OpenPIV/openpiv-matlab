@@ -389,7 +389,7 @@ set(handles.axes1,'Units','pixels');
 % else
 %     prepfun = inline('imadjust(x)');
 % end
-% 
+%
 % try
 %     % imshow(fullfile(handles.path,handles.files{1}));
 %     tmp = imread(fullfile(handles.path,handles.files{1}));
@@ -465,209 +465,21 @@ set(handles.figure1,'pointer','watch')
 
 image1 = fullfile(handles.path,handles.files{1});
 image2 = fullfile(handles.path,handles.files{2});
-[a,b,a1,b1] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
+[a,b] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 if isempty(a) || isempty(b)
     errordlg('Something wrong with your images')
 end
 
 switch handles.filesType
     case{'sequence'}
-        
         for fileind = 1:handles.amount-jump	% main loop, for whole file list
-            %      while (get(handles.pushbutton_start,'UserData') ==1)
-            
-            %             set(handles.edit_num,'string',sprintf('%d/%d',fileind,handles.amount-jump));
-            set(handles.edit_num,'string',sprintf('%d',fileind));
-            
-            image1 = fullfile(handles.path,handles.files{fileind});
-            image2 = fullfile(handles.path,handles.files{fileind+jump});
-            
-            [a,b,a1,b1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
-            
-            a1 = prepfun(a1);
-            b1 = prepfun(b1);
-            
-            
-            [verSize,horSize]= size(a1);
-            
-            % Prepare the results storage;
-            numcols = floor((horSize-ittWidth)/ovlapHor+1);
-            numrows = floor((verSize-ittHeight)/ovlapVer+1);
-            res = zeros(numcols*numrows,5);
-            resind = 0;
-            
-            a2 = zeros(ittHeight,ittWidth);
-            b2 = zeros(ittHeight,ittWidth);
-            NfftWidth = 2*ittWidth;
-            NfftHeight = 2*ittHeight;
-            
-            %%%%%% Start the loop for each interrogation block %%%%%%%
-            axes(handles.axes1);
-            % imshow(imadjust(a),[]);
-            imshow(prepfun(a),[]);
-            hold on
-                        
-            for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
-                for k = 1:ovlapHor:horSize-ittWidth+1 % horizontally
-                    if (get(hObject,'UserData') == 1)
-                        a2 = a1(m:m+ittHeight-1,k:k+ittWidth-1);
-                        b2 = b1(m:m+ittHeight-1,k:k+ittWidth-1);
-                        
-                        %                         a2 = prepfun(a2);
-                        %                         b2 = prepfun(b2);
-                        
-                        c = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth);
-                        % c = cross_correlate_rect(a2,b2,Nfftx,Nffty);
-                        if ~any(c(:)), % completely "black"
-                            u = 0;
-                            v = 0;
-                            y = origin(2) + m + ittHeight/2 - 1;
-                            x = origin(1) + k + ittWidth/2 -  1;
-                            resind = resind + 1;
-                            s2n = 0; 
-                            res(resind,:) = [x y u v s2n];
-                            continue
-                        end
-                        
-                        [peak1,peak2,pixi,pixj] = find_displacement_rect(c,s2ntype);
-                        
-                        [peakVer,peakHor,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,ittWidth,ittHeight);
-                        
-                        % Scale the pixel displacement to the velocity
-                        u = (ittWidth-peakHor);
-                        v = (ittHeight-peakVer);
-                        y = origin(2) + m + ittHeight/2-1;
-                        x = origin(1) + k + ittWidth/2-1;
-                        
-                        resind = resind + 1;
-                        res(resind,:) = [x y u v s2n];
-                        % quiver(x+cropvec(1),y+cropvec(2),u,v,'y');
-                        if u ~= 0 || v ~= 0
-                            %                             quiver(x,y,u,v,5,'y','Linewidth',1);
-                            %                             drawnow;
-                            plotarrow(x,y,u,v,'y',10);
-                            % drawnow
-                        end
-                    end
-                end
-                drawnow
-            end
-            
-            no_filt_res = res;
-            
-            [res, filt_res] = openpiv_filter(res,numcols,numrows,outl);
-            
-            imshow(prepfun(a),[]);
-            hold on
-            quiverm(res,'color','g','AutoScaleFactor',2);
-            ind = (filt_res(:,3) ~= no_filt_res(:,3) | filt_res(:,4) ~= no_filt_res(:,4));
-            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
-            drawnow
-            
-            basename = handles.files{fileind}(1:end-4);
-            baseext = '.vec';
-            
-            openpiv_output(res,no_filt_res,filt_res,dt,sclt,numrows, numcols, ...
-                handles.path,basename,baseext);
-
-            hold off
+            openpiv_main_loop(handles, fileind, jump, cropvec,ittWidth,...
+    ittHeight,ovlapHor,ovlapVer, prepfun, s2ntype, s2nl, outl, sclt, dt)
         end
     case{'pairs'}
         for fileind = 1:2:handles.amount	% main loop, for whole file list
-            %      while (get(handles.pushbutton_start,'UserData') ==1)
-            
-            %             set(handles.edit_num,'string',sprintf('%d/%d',fileind,handles.amount));
-            set(handles.edit_num,'string',sprintf('%d',fileind));
-            
-            image1 = fullfile(handles.path,handles.files{fileind});
-            image2 = fullfile(handles.path,handles.files{fileind+1});
-            
-            [a,b,a1,b1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
-            
-            a1 = prepfun(a1);
-            b1 = prepfun(b1);
-            
-            [verSize,horSize]= size(a1);
-            
-            % Prepare the results storage;
-            numcols = floor((horSize-ittWidth)/ovlapHor+1);
-            numrows = floor((verSize-ittHeight)/ovlapVer+1);
-            res = zeros(numcols*numrows,5);
-            resind = 0;
-            
-            a2 = zeros(ittHeight,ittWidth);
-            b2 = zeros(ittHeight,ittWidth);
-            NfftWidth = 2*ittWidth;
-            NfftHeight = 2*ittHeight;
-            
-            axes(handles.axes1);
-            % imshow(imadjust(a),[]);
-            imshow(prepfun(a),[]);
-            hold on
-            
-            for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
-                for k = 1:ovlapHor:horSize-ittWidth+1 % horizontally
-                    % if Stop button pressed:
-                    if (get(handles.pushbutton_start,'UserData') == 0)
-                        return;
-                    end
-                    
-                    a2 = a1(m:m+ittHeight-1,k:k+ittWidth-1);
-                    b2 = b1(m:m+ittHeight-1,k:k+ittWidth-1);
-                    
-                    
-                    c = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth);
-                    % c = cross_correlate_rect(a2,b2,Nfftx,Nffty);
-                    if ~any(c(:)), % completely "black"
-                        u = 0;
-                        v = 0;
-                        y = origin(1) + m + ittHeight/2 - 1;
-                        x = origin(2) + k + ittWidth/2 -  1;
-                        continue
-                    end
-                    
-                    [peak1,peak2,pixi,pixj] = find_displacement_rect(c,s2ntype);
-                    
-                    [peakVer,peakHor,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,ittWidth,ittHeight);
-                    
-                    % Scale the pixel displacement to the velocity
-                    u = (ittWidth-peakHor);
-                    v = (ittHeight-peakVer);
-                    y = origin(2) + m + ittHeight/2-1;
-                    x = origin(1) + k + ittWidth/2-1;
-                    
-                    resind = resind + 1;
-                    res(resind,:) = [x y u v s2n];
-                    % quiver(x+cropvec(1),y+cropvec(2),u,v,'y');
-                    if u ~= 0 || v ~= 0
-                        %                             quiver(x,y,u,v,5,'y','Linewidth',1);
-                        %                             drawnow;
-                        plotarrow(x,y,u,v,'y',10);
-                        % draw_arrow([x,y],[x+u,y+v],20)
-                        % drawnow
-                    end
-                end
-                drawnow
-            end
-            
-            no_filt_res = res;
-            
-            [res, filt_res] = openpiv_filter(res,numcols,numrows,outl);
-            
-            imshow(prepfun(a),[]);
-            hold on
-            quiverm(res,'color','g','AutoScaleFactor',2);
-            ind = res(:,3) ~= no_filt_res(:,3);
-            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
-            drawnow
-            
-            basename = handles.files{fileind}(1:end-4);
-            baseext = '.vec';
-            
-            openpiv_output(res,no_filt_res,filt_res,dt,sclt,numrows, numcols, ...
-                handles.path,basename,baseext);
-
-            hold off;
+            openpiv_main_loop(handles, fileind, 1, cropvec,ittWidth,...
+    ittHeight,ovlapHor,ovlapVer, prepfun, s2ntype, s2nl, outl, sclt, dt)
         end
     otherwise
         
@@ -1132,12 +944,12 @@ web('http://www.openpiv.net/faq.html', '-new');
 function im = openpiv_imread(handles,filenum)
 % openpiv_imread encapsulates all the image reading functions
 % that can be imread for 'jpg','bmp', etc. or 'tiffread2' for TIFF
-% images from Insight (tm) 
+% images from Insight (tm)
 % Usage:
 % >>  im = openpiv_imread(handles,file_number);
 % >>  imshow(im);
 
-try 
+try
     im = imread(fullfile(handles.path,handles.files{filenum}));
 catch
     tmp = tiffread2(fullfile(handles.path,handles.files{filenum}));
@@ -1179,3 +991,106 @@ function edit_dt_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+
+
+
+% -- Main loop --- %
+function openpiv_main_loop(handles, fileind, jump, cropvec,ittWidth,...
+    ittHeight,ovlapHor,ovlapVer, prepfun, s2ntype, s2nl, outl, sclt, dt)
+% OPENPIV_MAIN_LOOP is the main PIV processing, post-processing and
+% plotting subroutines calls
+
+set(handles.edit_num,'string',sprintf('%d',fileind));
+
+image1 = fullfile(handles.path,handles.files{fileind});
+image2 = fullfile(handles.path,handles.files{fileind+jump});
+
+[a,~,a1,b1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
+
+a1 = prepfun(a1);
+b1 = prepfun(b1);
+
+[verSize,horSize]= size(a1);
+
+% Prepare the results storage;
+numcols = floor((horSize-ittWidth)/ovlapHor+1);
+numrows = floor((verSize-ittHeight)/ovlapVer+1);
+res = zeros(numcols*numrows,5);
+resind = 0;
+
+% a2 = zeros(ittHeight,ittWidth);
+% b2 = zeros(ittHeight,ittWidth);
+NfftWidth = 2*ittWidth;
+NfftHeight = 2*ittHeight;
+
+axes(handles.axes1);
+% imshow(imadjust(a),[]);
+imshow(prepfun(a),[]);
+hold on
+
+for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
+    for k = 1:ovlapHor:horSize-ittWidth+1 % horizontally
+        % if Stop button pressed:
+        if (get(handles.pushbutton_start,'UserData') == 0)
+            return;
+        end
+        
+        a2 = a1(m:m+ittHeight-1,k:k+ittWidth-1);
+        b2 = b1(m:m+ittHeight-1,k:k+ittWidth-1);
+        
+        
+        c = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth);
+        % c = cross_correlate_rect(a2,b2,Nfftx,Nffty);
+        if ~any(c(:)), % completely "black"
+            u = 0;
+            v = 0;
+            y = origin(1) + m + ittHeight/2 - 1;
+            x = origin(2) + k + ittWidth/2 -  1;
+            continue
+        end
+        
+        [peak1,peak2,pixi,pixj] = find_displacement_rect(c,s2ntype);
+        
+        [peakVer,peakHor,s2n] = sub_pixel_velocity_rect(c,pixi,pixj,peak1,peak2,s2nl,ittWidth,ittHeight);
+        
+        % Scale the pixel displacement to the velocity
+        u = (ittWidth-peakHor);
+        v = (ittHeight-peakVer);
+        y = origin(2) + m + ittHeight/2-1;
+        x = origin(1) + k + ittWidth/2-1;
+        
+        resind = resind + 1;
+        res(resind,:) = [x y u v s2n];
+        % quiver(x+cropvec(1),y+cropvec(2),u,v,'y');
+        if u ~= 0 || v ~= 0
+            %                             quiver(x,y,u,v,5,'y','Linewidth',1);
+            %                             drawnow;
+            plotarrow(x,y,u,v,'y',10);
+            % draw_arrow([x,y],[x+u,y+v],20)
+            % drawnow
+        end
+    end
+    drawnow
+end
+
+no_filt_res = res;
+
+[res, filt_res] = openpiv_filter(res,numcols,numrows,outl);
+
+imshow(prepfun(a),[]);
+hold on
+quiverm(res,'color','g','AutoScaleFactor',2);
+ind = (filt_res(:,3) ~= no_filt_res(:,3) | filt_res(:,4) ~= no_filt_res(:,4));
+quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
+drawnow
+
+basename = handles.files{fileind}(1:end-4);
+baseext = '.vec';
+
+openpiv_output(res,no_filt_res,filt_res,dt,sclt,numrows, numcols, ...
+    handles.path,basename,baseext);
+
+hold off
