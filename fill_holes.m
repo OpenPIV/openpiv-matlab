@@ -8,9 +8,9 @@ function vector = fill_holes(vector)
 %
 % See also INPAINT_NANS
 %
+vector(abs(vector) == 0) = NaN;
 
-while any(isnan(vector(:))) || any(abs(vector(:)) == 0)
-    vector(abs(vector) == 0) = NaN;
+while any(isnan(vector(:))) 
     % vector = inpaint_nans(real(vector)) + 1i*inpaint_nans(imag(vector));
     vector = inpaint_nans(vector); % works for complex values out of the box
 end
