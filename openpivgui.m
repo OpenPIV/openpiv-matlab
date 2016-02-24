@@ -789,7 +789,7 @@ switch handles.filesType
             % Filtered results will be stored in '.._flt.txt' file
             filt_res = res;
             
-            vector = fill_holes(vector,numrows,numcols);
+            vector = fill_holes(vector);
             res(:,3) = reshape(real(vector),numrows*numcols,1);
             res(:,4) = reshape(imag(vector),numrows*numcols,1);
             
