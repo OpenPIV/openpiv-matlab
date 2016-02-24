@@ -545,113 +545,32 @@ switch handles.filesType
                         if u ~= 0 || v ~= 0
                             %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                             %                             drawnow;
-                            plotarrow(x,y,u,v,'g',10);
+                            plotarrow(x,y,u,v,'y',10);
                             % drawnow
                         end
                     end
                 end
+                drawnow
             end
             
-            
-            
-            % NO_FILT_RES will be stored in '.._noflt.txt' file at the end of program
             no_filt_res = res;
             
+            [res, filt_res] = openpiv_filter(res,numcols,numrows,outl);
             
-            
-            % Reshape U and V matrices in two-dimensional grid and produce
-            % velocity vector in U + i*V form (real and imaginary parts):
-            
-            u = reshape(res(:,3), numrows,numcols);
-            v = reshape(res(:,4), numrows,numcols);
-            vector = u + sqrt(-1)*v;
-            
-            % Remove outlayers - GLOBAL FILTERING
-            vector(abs(vector)>mean(abs(vector(vector~=0)))*outl) = 0;
-            u = real(vector);
-            v = imag(vector);
-            
-            % Adaptive Local Median filtering
-            
-            kernel = [-1 -1 -1; -1 8 -1; -1 -1 -1];
-            tmpv = abs(conv2(v,kernel,'same'));
-            tmpu = abs(conv2(u,kernel,'same'));
-            
-            % WE HAVE TO DECIDE WHICH LIMIT TO USE:
-            % 1. Mean + 3*STD for each one separately OR
-            % 2. For velocity vector length (and angle)
-            % 3. OR OTHER.
-            
-            lmtv = mean(tmpv(tmpv~=0)) + 3*std(tmpv(tmpv~=0));
-            lmtu = mean(tmpu(tmpu~=0)) + 3*std(tmpu(tmpu~=0));
-            
-            u_out = find(tmpu>lmtu);
-            v_out = find(tmpv>lmtv);
-            
-            % Let's throw the outlayers out:
-            u(u_out) = 0; u(v_out) = 0;
-            v(v_out) = 0; v(u_out) = 0;
-            vector = u + sqrt(-1)*v;
-            
-            res(:,3) = reshape(real(vector),numrows*numcols,1);
-            res(:,4) = reshape(imag(vector),numrows*numcols,1);
-            
-            % Filtered results will be stored in '.._flt.txt' file
-            filt_res = res;
-            
-            vector = fill_holes(vector,numrows,numcols);
-            res(:,3) = reshape(real(vector),numrows*numcols,1);
-            res(:,4) = reshape(imag(vector),numrows*numcols,1);
-            
-            
-            % scale the pixels and apply the dt
-            
-            if sclt ~= 0
-                res = res * sclt; % pixels to meters
-                no_filt_res = no_filt_res * sclt;
-                filt_res = filt_res * sclt;
-                xUnits = 'm';
-            else
-                xUnits = 'pix';
-            end
-            
-            if dt ~= 0
-                res(:,3:4) = res(:,3:4)/dt;
-                no_filt_res(:,3:4) = no_filt_res(:,3:4)/dt;
-                filt_res(:,3:4) = filt_res(:,3:4) /dt;
-                tUnits = 's';
-            else
-                tUnits = 'dt';
-            end
-                        
-            % Save results as ASCII (text) files:
-            % Final (filtered, interpolated) results
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),baseext],'w');
+            imshow(prepfun(a),[]);
+            hold on
+            quiverm(res,'color','g','AutoScaleFactor',2);
+            ind = (filt_res(:,3) ~= no_filt_res(:,3) | filt_res(:,4) ~= no_filt_res(:,4));
+            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
+            drawnow
             
             basename = handles.files{fileind}(1:end-4);
             baseext = '.vec';
             
-            final = fullfile(handles.path,[basename,baseext]);
-            write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
-            
-            % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
-            % nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
-            % write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
-            
+            openpiv_output(res,no_filt_res,filt_res,dt,sclt,numrows, numcols, ...
+                handles.path,basename,baseext);
 
-            % Filtered, but not interpolated:
-            % filtered = fullfile(handles.path,[basename,'_flt.txt']);
-            % write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
-            
-            
-            % Results visualization
-            % Only for final, filtered and interpolated data
-            %    imshow(a,[]);
-            %    hold on
-            %             quiverm(res,2,'g','LineWidth',1);
-            %             drawnow
-            %    F(:,fileind) = getframe;
-            hold off;
+            hold off
         end
     case{'pairs'}
         for fileind = 1:2:handles.amount	% main loop, for whole file list
@@ -723,114 +642,31 @@ switch handles.filesType
                     if u ~= 0 || v ~= 0
                         %                             quiver(x,y,u,v,5,'y','Linewidth',1);
                         %                             drawnow;
-                        plotarrow(x,y,u,v,'g',10);
+                        plotarrow(x,y,u,v,'y',10);
                         % draw_arrow([x,y],[x+u,y+v],20)
                         % drawnow
                     end
                 end
+                drawnow
             end
             
-            
-            
-            % NO_FILT_RES will be stored in '.._noflt.txt' file at the end of program
             no_filt_res = res;
             
-            % Reshape U and V matrices in two-dimensional grid and produce
-            % velocity vector in U + i*V form (real and imaginary parts):
+            [res, filt_res] = openpiv_filter(res,numcols,numrows,outl);
             
-            u = reshape(res(:,3), numrows,numcols);
-            v = reshape(res(:,4), numrows,numcols);
-            vector = u + sqrt(-1)*v;
-            
-            % Remove outlayers - GLOBAL FILTERING
-            ind = isfinite(abs(vector)) & abs(vector) ~= 0;
-            limit = mean(abs(vector(ind)))*outl;
-            outliers = abs(vector) > limit;
-            vector(outliers) = 0;
-            u = real(vector);
-            v = imag(vector);
-            
-            % Adaptive Local Median filtering
-            kernel = [-1 -1 -1; -1 8 -1; -1 -1 -1];
-            tmpv = abs(conv2(v,kernel,'same'));
-            tmpu = abs(conv2(u,kernel,'same'));
-            
-            % WE HAVE TO DECIDE WHICH LIMIT TO USE:
-            % 1. Mean + 3*STD for each one separately OR
-            % 2. For velocity vector length (and angle)
-            % 3. OR OTHER.
-            ind = isfinite(abs(tmpv)) & abs(tmpv) ~= 0;
-            lmtv = mean(tmpv(ind)) + 3*std(tmpv(ind));
-            
-            ind = isfinite(abs(tmpu)) & abs(tmpu) ~= 0;
-            lmtu = mean(tmpu(ind)) + 3*std(tmpu(ind));
-            
-            u_out = find(tmpu>lmtu);
-            v_out = find(tmpv>lmtv);
-            
-            % Let's throw the outlayers out:
-            u(u_out) = 0; u(v_out) = 0;
-            v(v_out) = 0; v(u_out) = 0;
-            vector = u + sqrt(-1)*v;
-            
-            res(:,3) = reshape(real(vector),numrows*numcols,1);
-            res(:,4) = reshape(imag(vector),numrows*numcols,1);
-            
-            % Filtered results will be stored in '.._flt.txt' file
-            filt_res = res;
-            
-            vector = fill_holes(vector,numrows,numcols);
-            res(:,3) = reshape(real(vector),numrows*numcols,1);
-            res(:,4) = reshape(imag(vector),numrows*numcols,1);
-            
-            
-            % scale the pixels and apply the dt
-            
-            if sclt ~= 0
-                res = res * sclt; % pixels to meters
-                no_filt_res = no_filt_res * sclt;
-                filt_res = filt_res * sclt;
-                xUnits = 'm';
-            else
-                xUnits = 'pix';
-            end
-            
-            if dt ~= 0
-                res(:,3:4) = res(:,3:4)/dt;
-                no_filt_res(:,3:4) = no_filt_res(:,3:4)/dt;
-                filt_res(:,3:4) = filt_res(:,3:4) /dt;
-                tUnits = 's';
-            else
-                tUnits = 'dt';
-            end
-                        
-            % Save results as ASCII (text) files:
-            % Final (filtered, interpolated) results
-            % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),baseext],'w');
+            imshow(prepfun(a),[]);
+            hold on
+            quiverm(res,'color','g','AutoScaleFactor',2);
+            ind = res(:,3) ~= no_filt_res(:,3);
+            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
+            drawnow
             
             basename = handles.files{fileind}(1:end-4);
             baseext = '.vec';
             
-            final = fullfile(handles.path,[basename,baseext]);
-            write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
-            
-            % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
-            % nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
-            % write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
-            
+            openpiv_output(res,no_filt_res,filt_res,dt,sclt,numrows, numcols, ...
+                handles.path,basename,baseext);
 
-            % Filtered, but not interpolated:
-            % filtered = fullfile(handles.path,[basename,'_flt.txt']);
-            % write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
-            
-            
-            % Results visualization
-            % Only for final, filtered and interpolated data
-            %    imshow(a,[]);
-            %    hold on
-            %             quiverm(res,2,'g','LineWidth',1);
-            %             drawnow
-            %    F(:,fileind) = getframe;
             hold off;
         end
     otherwise
@@ -1246,33 +1082,21 @@ guidata(hObject,handles);
 
 % --------------------------------------------------------------------
 function handles = ReadImageDirectory(handles)
-try
-    firstDif = find(handles.files{2}-handles.files{1},1,'first'); % how the first two files are different?
-    handles.filebase = handles.files{1}(1:firstDif-1); % base file name, e.g. bird_b00100
-    fileType = handles.files{1}(firstDif:end-4); % without extension
-    switch lower(fileType)
-        case{'a','_a','b','_b'}
-            handles.amount = length(handles.files); % pairs
-            handles.filesType = 'pairs';
-            handles.step = 2;
-            set(handles.edit_jump,'Enable','Off');
-            set(handles.edit_jump,'String','-1');
-        otherwise
-            handles.amount = length(handles.files);
-            handles.filesType = 'sequence';
-            handles.step = 1;
-            set(handles.edit_jump,'Enable','On');
-    end
-catch % dimagree % the two files do have a common filebase, just a pair
-    handles.filebase = 'tmp';
-    handles.amount = length(handles.files); % pairs
-    if handles.amount ~= 2
-        error('This file type is not handled to OpenPIV, rename files ');
-    end
-    handles.filesType = 'pairs';
-    handles.step = 2;
-    set(handles.edit_jump,'Enable','Off');
-    set(handles.edit_jump,'String','-1');
+firstDif = find(handles.files{2}-handles.files{1},1,'first'); % how the first two files are different?
+handles.filebase = handles.files{1}(1:firstDif-1); % base file name, e.g. bird_b00100
+fileType = handles.files{1}(firstDif:end-4); % without extension
+switch lower(fileType)
+    case{'a','_a','b','_b'}
+        handles.amount = length(handles.files); % pairs
+        handles.filesType = 'pairs';
+        handles.step = 2;
+        set(handles.edit_jump,'Enable','Off');
+        set(handles.edit_jump,'String','-1');
+    otherwise
+        handles.amount = length(handles.files);
+        handles.filesType = 'sequence';
+        handles.step = 1;
+        set(handles.edit_jump,'Enable','On');
 end
 
 % handles.filebase = handles.files{1}(1:max(findstr(handles.files{1},'_'))-1);
