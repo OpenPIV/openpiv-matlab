@@ -22,8 +22,8 @@ if isstr(x)
     x = eval(x);
 end
 
-x(abs(x(:,3)) > prctile(abs(x(:,3)),90),3) = NaN;
-x(abs(x(:,4)) > prctile(abs(x(:,4)),90),4) = NaN;
+x(abs(x(:,3)) > prctile(abs(x(:,3)),99),3) = NaN;
+x(abs(x(:,4)) > prctile(abs(x(:,4)),99),4) = NaN;
 quiver(x(:,1),x(:,2),x(:,3),x(:,4),varargin{1:end});
 
 % quiver(x(:,1),x(:,2),x(:,3),x(:,4),varargin{:});

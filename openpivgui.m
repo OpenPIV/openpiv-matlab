@@ -562,12 +562,15 @@ switch handles.filesType
             % Reshape U and V matrices in two-dimensional grid and produce
             % velocity vector in U + i*V form (real and imaginary parts):
             
-            u = reshape(res(:,3), numrows,numcols);
-            v = reshape(res(:,4), numrows,numcols);
+            u = reshape(res(:,3), numcols,numrows);
+            v = reshape(res(:,4), numcols,numrows);
             vector = u + sqrt(-1)*v;
+            vector = fill_holes(vector);
             
             % Remove outlayers - GLOBAL FILTERING
             vector(abs(vector)>mean(abs(vector(vector~=0)))*outl) = 0;
+            vector = fill_holes(vector);
+            
             u = real(vector);
             v = imag(vector);
             
@@ -599,10 +602,17 @@ switch handles.filesType
             % Filtered results will be stored in '.._flt.txt' file
             filt_res = res;
             
-            vector = fill_holes(vector,numrows,numcols);
+            vector = fill_holes(vector);
             res(:,3) = reshape(real(vector),numrows*numcols,1);
             res(:,4) = reshape(imag(vector),numrows*numcols,1);
             
+            % draw a bit nicer quiver with two colors
+            
+            imshow(prepfun(a),[]);
+            hold on
+            quiverm(res,'color','g','AutoScaleFactor',2);
+            ind = res(:,3) ~= no_filt_res(:,3);
+            quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.5);
             
             % scale the pixels and apply the dt
             
