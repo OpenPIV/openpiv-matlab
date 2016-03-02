@@ -472,7 +472,6 @@ end
 
 switch handles.filesType
     case{'sequence'}
-        
         for fileind = 1:handles.amount-jump	% main loop, for whole file list
             %      while (get(handles.pushbutton_start,'UserData') ==1)
             
@@ -493,9 +492,9 @@ switch handles.filesType
             % Prepare the results storage;
             numcols = floor((horSize-ittWidth)/ovlapHor+1);
             numrows = floor((verSize-ittHeight)/ovlapVer+1);
-            res = zeros(numcols*numrows,5);
+            res = zeros(numcols*numrows,6);
             resind = 0;
-            
+            %%%%
             a2 = zeros(ittHeight,ittWidth);
             b2 = zeros(ittHeight,ittWidth);
             NfftWidth = 2*ittWidth;
@@ -516,7 +515,9 @@ switch handles.filesType
                         %                         a2 = prepfun(a2);
                         %                         b2 = prepfun(b2);
                         
-                        c = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth);
+                        [c,c2] = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth);
+                        
+                        corr=max(max(c2));
                         % c = cross_correlate_rect(a2,b2,Nfftx,Nffty);
                         if ~any(c(:)), % completely "black"
                             u = 0;
@@ -525,7 +526,7 @@ switch handles.filesType
                             x = origin(1) + k + ittWidth/2 -  1;
                             resind = resind + 1;
                             s2n = 0; 
-                            res(resind,:) = [x y u v s2n];
+                            res(resind,:) = [x y u v corr s2n];
                             continue
                         end
                         
@@ -540,7 +541,7 @@ switch handles.filesType
                         x = origin(1) + k + ittWidth/2-1;
                         
                         resind = resind + 1;
-                        res(resind,:) = [x y u v s2n];
+                        res(resind,:) = [x y u v corr s2n];
                         % quiver(x+cropvec(1),y+cropvec(2),u,v,'y');
                         if u ~= 0 || v ~= 0
                             %                             quiver(x,y,u,v,5,'y','Linewidth',1);
@@ -562,9 +563,14 @@ switch handles.filesType
             % Reshape U and V matrices in two-dimensional grid and produce
             % velocity vector in U + i*V form (real and imaginary parts):
             
-            u = reshape(res(:,3), numrows,numcols);
-            v = reshape(res(:,4), numrows,numcols);
-            vector = u + sqrt(-1)*v;
+            u = reshape(res(:,3), numcols,numrows);             %addition
+            v = reshape(res(:,4), numcols,numrows);             %addition
+            u=u';                                               %addition
+            v=v';                                               %addition
+            vector=u + sqrt(-1)*v;                              %addition
+%             u = reshape(res(:,3), numrows,numcols);
+%             v = reshape(res(:,4), numrows,numcols);
+%             vector = u + sqrt(-1)*v;
             
             % Remove outlayers - GLOBAL FILTERING
             vector(abs(vector)>mean(abs(vector(vector~=0)))*outl) = 0;
@@ -572,7 +578,7 @@ switch handles.filesType
             v = imag(vector);
             
             % Adaptive Local Median filtering
-            
+            %kernel = [-1 -1 -1 -1 -1; -1 2 2 2 -1; -1 2 8 2 -1; -1 2 2 2 -1; -1 -1 -1 -1 -1];
             kernel = [-1 -1 -1; -1 8 -1; -1 -1 -1];
             tmpv = abs(conv2(v,kernel,'same'));
             tmpu = abs(conv2(u,kernel,'same'));
@@ -591,17 +597,20 @@ switch handles.filesType
             % Let's throw the outlayers out:
             u(u_out) = 0; u(v_out) = 0;
             v(v_out) = 0; v(u_out) = 0;
-            vector = u + sqrt(-1)*v;
             
+            vector = u + sqrt(-1)*v;
+            vector=vector';                                     %addition
             res(:,3) = reshape(real(vector),numrows*numcols,1);
-            res(:,4) = reshape(imag(vector),numrows*numcols,1);
+            res(:,4) = reshape(-imag(vector),numrows*numcols,1);%modified
             
             % Filtered results will be stored in '.._flt.txt' file
             filt_res = res;
-            
+           
+            vector=vector';                                     %addition
             vector = fill_holes(vector,numrows,numcols);
+            vector=vector';                                     %addition
             res(:,3) = reshape(real(vector),numrows*numcols,1);
-            res(:,4) = reshape(imag(vector),numrows*numcols,1);
+            res(:,4) = reshape(-imag(vector),numrows*numcols,1);%modified
             
             
             % scale the pixels and apply the dt
@@ -627,21 +636,24 @@ switch handles.filesType
             % Save results as ASCII (text) files:
             % Final (filtered, interpolated) results
             % fid = fopen([dirname,filesep,filenames(fileind,1:end-4),baseext],'w');
-            
             basename = handles.files{fileind}(1:end-4);
             baseext = '.vec';
             
             final = fullfile(handles.path,[basename,baseext]);
+            finaltxt = fullfile(handles.path,[basename,'_final.txt']);
             write_openpiv_vec(final,res,xUnits,tUnits,numrows,numcols);
+            write_openpiv_txt(finaltxt,res,xUnits,tUnits,numrows,numcols);
             
             % Unfiltered, uninterpolated: (comment with % sign if you don't need it)
             nofilt = fullfile(handles.path,[basename,'_noflt.txt']);
-            write_openpiv_vec(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
+            write_openpiv_txt(nofilt,no_filt_res,xUnits,tUnits,numrows,numcols);
             
 
             % Filtered, but not interpolated:
             filtered = fullfile(handles.path,[basename,'_flt.txt']);
-            write_openpiv_vec(filtered,filt_res,xUnits,tUnits,numrows,numcols); 
+            %filtered2 = fullfile(handles.path,[basename,'_flt2.txt']);
+            write_openpiv_txt(filtered,filt_res,xUnits,tUnits,numrows,numcols);
+            %write_openpiv_txt(filtered2,filt_res2,xUnits,tUnits,numrows,numcols);
             
             
             % Results visualization
@@ -1207,7 +1219,7 @@ guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
-function exit_Callback(hObject, eventdata, handles)
+function exit_Callback(~, ~, handles)
 % hObject    handle to exit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

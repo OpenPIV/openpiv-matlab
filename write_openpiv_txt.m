@@ -1,4 +1,4 @@
-function success = write_openpiv_vec(filename,data,xUnits,tUnits,numrows,numcols)
+function success = write_openpiv_txt(filename,data,xUnits,tUnits,numrows,numcols)
 % success = write_openpiv_txt(filename,data,,xUnits,uUnits)
 % originally it was just
 % fid = fopen(fullfile(handles.path,[handles.files{fileind}(1:end-4),'.txt']),'w');
@@ -38,7 +38,7 @@ header = sprintf('VARIABLES= "X %s", "Y %s", "U %s/%s", "V %s/%s", "corr", "CHC"
 
 % "CHC"
 
-fprintf(fid,'%s',header);
+%fprintf(fid,'%s',header);
 % print the data
 fprintf(fid,'%3d %3d %7.4f %7.4f %7.4f %7.4f\n',data);
 fclose(fid);

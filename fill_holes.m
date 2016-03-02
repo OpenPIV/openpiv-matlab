@@ -7,7 +7,9 @@ function vector = fill_holes(vector,reslenx,resleny)
 %
 
 vector(abs(vector)==0) = NaN;
-vector = inpaint_nans(real(vector)) + i*inpaint_nans(imag(vector));
+%vector = inpaint_nans(real(vector)) + i*inpaint_nans(imag(vector));
+%%SOSTITUZIONE MIA
+vector = inpaint_nans(vector,3);
 
 % [indx,indy] = find(~abs(vector));
 %
