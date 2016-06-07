@@ -1030,6 +1030,8 @@ axes(handles.axes1);
 % imshow(imadjust(a),[]);
 imshow(prepfun(a),[]);
 hold on
+h1 = animatedline('Color','y');
+h2 = animatedline('Color','y');
 
 for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
     for k = 1:ovlapHor:horSize-ittWidth+1 % horizontally
@@ -1066,14 +1068,9 @@ for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
         res(resind,:) = [x y u v s2n];
         % quiver(x+cropvec(1),y+cropvec(2),u,v,'y');
         if u ~= 0 || v ~= 0
-            %                             quiver(x,y,u,v,5,'y','Linewidth',1);
-            %                             drawnow;
-            plotarrow(x,y,u,v,'y',10);
-            % draw_arrow([x,y],[x+u,y+v],20)
-            % drawnow
+            plotarrow(h1,h2,x,y,u,v,10);
         end
     end
-    drawnow
 end
 
 no_filt_res = res;
@@ -1082,10 +1079,18 @@ no_filt_res = res;
 
 imshow(prepfun(a),[]);
 hold on
+clearpoints(h1);
+clearpoints(h2);
+% for i = 1:length(res)
+%     plotarrow(h1,h2,res(i,1),res(i,2),res(i,3),res(i,4));
+% end
 quiverm(res,'color','g','AutoScaleFactor',2);
 ind = (filt_res(:,3) ~= no_filt_res(:,3) | filt_res(:,4) ~= no_filt_res(:,4));
 quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
-drawnow
+% for i = 1:length(res)
+%     plotarrow(h1,h2,res(i,1),res(i,2),res(i,3),res(i,4));
+% end
+% drawnow
 
 basename = handles.files{fileind}(1:end-4);
 baseext = '.vec';
