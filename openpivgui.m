@@ -1086,7 +1086,9 @@ clearpoints(h2);
 % end
 quiverm(res,'color','g','AutoScaleFactor',2);
 ind = (filt_res(:,3) ~= no_filt_res(:,3) | filt_res(:,4) ~= no_filt_res(:,4));
-quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
+if ~any(ind)
+    quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
+end
 % for i = 1:length(res)
 %     plotarrow(h1,h2,res(i,1),res(i,2),res(i,3),res(i,4));
 % end
