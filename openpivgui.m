@@ -462,10 +462,11 @@ end
 % Main loop
 set(handles.figure1,'pointer','watch')
 
+% 
+% image1 = fullfile(handles.path,handles.files{1});
+% image2 = fullfile(handles.path,handles.files{2});
 
-image1 = fullfile(handles.path,handles.files{1});
-image2 = fullfile(handles.path,handles.files{2});
-[a,b] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
+[a,b] = read_pair_of_images_rect(handles,1,1,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 if isempty(a) || isempty(b)
     errordlg('Something wrong with your images')
 end
@@ -941,33 +942,7 @@ function wiki_Callback(hObject, eventdata, handles)
 web('http://www.openpiv.net/faq.html', '-new');
 
 
-function im = openpiv_imread(handles,filenum)
-% openpiv_imread encapsulates all the image reading functions
-% that can be imread for 'jpg','bmp', etc. or 'tiffread2' for TIFF
-% images from Insight (tm)
-% Usage:
-% >>  im = openpiv_imread(handles,file_number);
-% >>  imshow(im);
 
-try
-    im = imread(fullfile(handles.path,handles.files{filenum}));
-catch
-    tmp = tiffread2(fullfile(handles.path,handles.files{filenum}));
-    im = im2double(tmp.data);
-end
-
-if length(size(im)) == 3
-    im = rgb2gray(im);
-end
-
-% Custom pre-processing of images, default = 'imadjust'
-preprocess = get(handles.checkbox_preprocess,'Value');
-if preprocess
-    prepfun = str2func(handles.preprocess);
-else
-    prepfun = inline('imadjust(x)'); % default is to stretch the image
-end
-im = prepfun(im);
 
 
 
@@ -1005,13 +980,12 @@ function openpiv_main_loop(handles, fileind, jump, cropvec,ittWidth,...
 
 set(handles.edit_num,'string',sprintf('%d',fileind));
 
-image1 = fullfile(handles.path,handles.files{fileind});
-image2 = fullfile(handles.path,handles.files{fileind+jump});
 
-[a,~,a1,b1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 
-a1 = prepfun(a1);
-b1 = prepfun(b1);
+[a,~,a1,b1,origin] = read_pair_of_images_rect(handles,fileind,jump,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
+
+% a1 = prepfun(a1);
+% b1 = prepfun(b1);
 
 [verSize,horSize]= size(a1);
 
@@ -1028,7 +1002,7 @@ NfftHeight = 2*ittHeight;
 
 axes(handles.axes1);
 % imshow(imadjust(a),[]);
-imshow(prepfun(a),[]);
+imshow(a,[]);
 hold on
 h1 = animatedline('Color','y');
 h2 = animatedline('Color','y');
@@ -1077,7 +1051,8 @@ no_filt_res = res;
 
 [res, filt_res] = openpiv_filter(res,numcols,numrows,outl);
 
-imshow(prepfun(a),[]);
+% imshow(prepfun(a),[]);
+imshow(a,[]);
 hold on
 clearpoints(h1);
 clearpoints(h2);
