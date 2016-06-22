@@ -990,8 +990,13 @@ set(handles.edit_num,'string',sprintf('%d',fileind));
 [verSize,horSize]= size(a1);
 
 % Prepare the results storage;
-numcols = floor((horSize-ittWidth)/ovlapHor+1);
-numrows = floor((verSize-ittHeight)/ovlapVer+1);
+
+rows = 1:ovlapVer:verSize - ittHeight + 1;
+cols =  1:ovlapHor:horSize - ittWidth + 1;
+
+numcols = length(rows);
+numrows = length(cols);
+
 res = zeros(numcols*numrows,5);
 resind = 0;
 
@@ -1007,8 +1012,8 @@ hold on
 h1 = animatedline('Color','y');
 h2 = animatedline('Color','y');
 
-for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
-    for k = 1:ovlapHor:horSize-ittWidth+1 % horizontally
+for m = rows % vertically
+    for k = cols % horizontally
         % if Stop button pressed:
         if (get(handles.pushbutton_start,'UserData') == 0)
             return;
@@ -1023,8 +1028,8 @@ for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
         if ~any(c(:)), % completely "black"
             u = 0;
             v = 0;
-            y = origin(1) + m + ittHeight/2 - 1;
-            x = origin(2) + k + ittWidth/2 -  1;
+            y = origin(2) + m + ittHeight/2 - 1;
+            x = origin(1) + k + ittWidth/2 -  1;
             continue
         end
         
