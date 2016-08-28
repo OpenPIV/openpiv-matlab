@@ -1,4 +1,4 @@
-function [A,B,A1,B1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer)
+function [A,B,A1,B1,origin] = read_pair_of_images_rect(handles,fileind,jump, cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer)
 % READ_PAIR_OF_IMAGES - reads two images (image1,image2) as BMP files
 % and crops them according to 'cropvec'
 % Inputs:
@@ -19,23 +19,26 @@ function [A,B,A1,B1,origin] = read_pair_of_images_rect(image1,image2,cropvec,itt
 % B = double(imread(image2,'bmp'))/255;
 origin = [0,0];
 
-try
-    A = imread(image1); % ,'tif'); 8 June 2005, no extension is necessary
-    B = imread(image2); % ,'tif'); % more flexibility for different image formats
-catch
-    warning off
-    tmp = tiffread2(image1);
-    A = im2double(tmp.data);
-    tmp = tiffread2(image2);
-    B = im2double(tmp.data);
-end
-if ndims(A) == 3
-    A = rgb2gray(A);
-    B = rgb2gray(B);
-elseif ndims(A) == 2
-    A = double(A)/255;
-    B = double(B)/255;
-end
+% image1 = fullfile(handles.path,handles.files{fileind});
+ %image2 = fullfile(handles.path,handles.files{fileind+jump});
+
+% try
+    A = openpiv_imread(handles,fileind); % ,'tif'); 8 June 2005, no extension is necessary
+    B = openpiv_imread(handles,fileind+jump); % ,'tif'); % more flexibility for different image formats
+% catch
+%     warning off
+%     tmp = tiffread2(image1);
+%     A = im2double(tmp.data);
+%     tmp = tiffread2(image2);
+%     B = im2double(tmp.data);
+% end
+% if ndims(A) == 3
+%     A = rgb2gray(A);
+%     B = rgb2gray(B);
+% elseif ndims(A) == 2
+%     A = double(A)/255;
+%     B = double(B)/255;
+% end
 
 
 

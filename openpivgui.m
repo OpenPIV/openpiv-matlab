@@ -462,10 +462,11 @@ end
 % Main loop
 set(handles.figure1,'pointer','watch')
 
+% 
+% image1 = fullfile(handles.path,handles.files{1});
+% image2 = fullfile(handles.path,handles.files{2});
 
-image1 = fullfile(handles.path,handles.files{1});
-image2 = fullfile(handles.path,handles.files{2});
-[a,b] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
+[a,b] = read_pair_of_images_rect(handles,1,1,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 if isempty(a) || isempty(b)
     errordlg('Something wrong with your images')
 end
@@ -941,33 +942,7 @@ function wiki_Callback(hObject, eventdata, handles)
 web('http://www.openpiv.net/faq.html', '-new');
 
 
-function im = openpiv_imread(handles,filenum)
-% openpiv_imread encapsulates all the image reading functions
-% that can be imread for 'jpg','bmp', etc. or 'tiffread2' for TIFF
-% images from Insight (tm)
-% Usage:
-% >>  im = openpiv_imread(handles,file_number);
-% >>  imshow(im);
 
-try
-    im = imread(fullfile(handles.path,handles.files{filenum}));
-catch
-    tmp = tiffread2(fullfile(handles.path,handles.files{filenum}));
-    im = im2double(tmp.data);
-end
-
-if length(size(im)) == 3
-    im = rgb2gray(im);
-end
-
-% Custom pre-processing of images, default = 'imadjust'
-preprocess = get(handles.checkbox_preprocess,'Value');
-if preprocess
-    prepfun = str2func(handles.preprocess);
-else
-    prepfun = inline('imadjust(x)'); % default is to stretch the image
-end
-im = prepfun(im);
 
 
 
@@ -1005,19 +980,23 @@ function openpiv_main_loop(handles, fileind, jump, cropvec,ittWidth,...
 
 set(handles.edit_num,'string',sprintf('%d',fileind));
 
-image1 = fullfile(handles.path,handles.files{fileind});
-image2 = fullfile(handles.path,handles.files{fileind+jump});
 
-[a,~,a1,b1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 
-a1 = prepfun(a1);
-b1 = prepfun(b1);
+[a,~,a1,b1,origin] = read_pair_of_images_rect(handles,fileind,jump,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
+
+% a1 = prepfun(a1);
+% b1 = prepfun(b1);
 
 [verSize,horSize]= size(a1);
 
 % Prepare the results storage;
-numcols = floor((horSize-ittWidth)/ovlapHor+1);
-numrows = floor((verSize-ittHeight)/ovlapVer+1);
+
+rows = 1:ovlapVer:verSize - ittHeight + 1;
+cols =  1:ovlapHor:horSize - ittWidth + 1;
+
+numcols = length(rows);
+numrows = length(cols);
+
 res = zeros(numcols*numrows,5);
 resind = 0;
 
@@ -1028,11 +1007,13 @@ NfftHeight = 2*ittHeight;
 
 axes(handles.axes1);
 % imshow(imadjust(a),[]);
-imshow(prepfun(a),[]);
+imshow(a,[]);
 hold on
+h1 = animatedline('Color','y');
+h2 = animatedline('Color','y');
 
-for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
-    for k = 1:ovlapHor:horSize-ittWidth+1 % horizontally
+for m = rows % vertically
+    for k = cols % horizontally
         % if Stop button pressed:
         if (get(handles.pushbutton_start,'UserData') == 0)
             return;
@@ -1047,8 +1028,8 @@ for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
         if ~any(c(:)), % completely "black"
             u = 0;
             v = 0;
-            y = origin(1) + m + ittHeight/2 - 1;
-            x = origin(2) + k + ittWidth/2 -  1;
+            y = origin(2) + m + ittHeight/2 - 1;
+            x = origin(1) + k + ittWidth/2 -  1;
             continue
         end
         
@@ -1066,26 +1047,32 @@ for m = 1:ovlapVer:verSize - ittHeight + 1 % vertically
         res(resind,:) = [x y u v s2n];
         % quiver(x+cropvec(1),y+cropvec(2),u,v,'y');
         if u ~= 0 || v ~= 0
-            %                             quiver(x,y,u,v,5,'y','Linewidth',1);
-            %                             drawnow;
-            plotarrow(x,y,u,v,'y',10);
-            % draw_arrow([x,y],[x+u,y+v],20)
-            % drawnow
+            plotarrow(h1,h2,x,y,u,v,10);
         end
     end
-    drawnow
 end
 
 no_filt_res = res;
 
 [res, filt_res] = openpiv_filter(res,numcols,numrows,outl);
 
-imshow(prepfun(a),[]);
+% imshow(prepfun(a),[]);
+imshow(a,[]);
 hold on
+clearpoints(h1);
+clearpoints(h2);
+% for i = 1:length(res)
+%     plotarrow(h1,h2,res(i,1),res(i,2),res(i,3),res(i,4));
+% end
 quiverm(res,'color','g','AutoScaleFactor',2);
 ind = (filt_res(:,3) ~= no_filt_res(:,3) | filt_res(:,4) ~= no_filt_res(:,4));
-quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
-drawnow
+if ~any(ind)
+    quiverm(no_filt_res(ind,:),'color','r','AutoScaleFactor',1.25);
+end
+% for i = 1:length(res)
+%     plotarrow(h1,h2,res(i,1),res(i,2),res(i,3),res(i,4));
+% end
+% drawnow
 
 basename = handles.files{fileind}(1:end-4);
 baseext = '.vec';
