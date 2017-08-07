@@ -13,8 +13,10 @@ doi: 10.1109/TIM.2010.2047149
 URL: http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5464317&isnumber=5609237
 
 
-### How to download the software  
-Use http://www.openpiv.net/downloads.html for the shortcuts to the zipped software packages
+### How to download the software
+Please note that there are two versions of the GUI: 
+1. older Matlab version, before 2014b: https://github.com/OpenPIV/openpiv-matlab/releases/tag/v1.1
+2. Newer Matlab versions, use http://www.openpiv.net/downloads.html for the shortcuts to the zipped software packages
 
 ### How to contribute ?
 
