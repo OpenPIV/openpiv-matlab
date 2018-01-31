@@ -30,8 +30,8 @@ Please note that there are two versions of the GUI:
 
 ###  Getting started  tutorials  
 1. Matlab - see the screencast http://youtu.be/yg-LjAt-v3Q
-2. Read the tutorial by <a href="mailto:Sergio.Bengoechea.Lozano@tnt.TU-Berlin.DE"> Sergio Bengoechea Lozano, TU Berlin </a>
-[Tutorial](https://github.com/OpenPIV/openpiv-matlab/raw/master/docs/Tutorial_OpenPIV/Tutorial_OpenPIV.pdf)   
+2. Read the [Tutorial](https://github.com/OpenPIV/openpiv-matlab/raw/master/docs/Tutorial_OpenPIV/Tutorial_OpenPIV.pdf)  by <a href="mailto:Sergio.Bengoechea.Lozano@tnt.TU-Berlin.DE"> Sergio Bengoechea Lozano, TU Berlin </a>
+  
 3. Python - http://www.openpiv.net/openpiv-python/  
 4. C++ - not ready yet  
 5. Spatial and Temporal Analysis Toolbox http://www.openpiv.net/openpiv-spatial-analysis-toolbox/  
