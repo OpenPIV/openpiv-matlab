@@ -1,5 +1,5 @@
 %!TEX root=../Tutorial_OpenPIV.tex
-\section{Inroduction}\label{Intro}
+\section{Introduction}\label{Intro}
 
 \emph{OpenPIV} is an open source Particle Image Velocimetry (PIV) analysis software written in 
 Python, MATLAB and C++. The aim of this document is to deliver a fast overview of the Matlab version of \emph{OpenPIV} only. For Python and C++ see in the respective repositories.
@@ -109,7 +109,7 @@ The outlier filter value is the threshold of the global outlier filter and indic
 
 \subsection{Jump}\label{Jump}
 
-The jump value indicates how many PIV-Images are evaluated in the anaylisis. The count starts at 
+The jump value indicates how many PIV-Images are evaluated in the analysis. The count starts at 
 the next image from the current one, i.e. if jump is equal to \emph{n} then \emph{OpenPIV} takes 
 the current image plus the next \emph{n} PIV-Images for one analysis. Note that at least two 
 PIV-Images are needed for the analysis, what makes jump values less than one pointless.
@@ -165,7 +165,7 @@ The number of output files will be the number of loaded PIV-Images minus the sel
 \appendix
 \section*{Appendix: Units convert}\label{Units}
 
-Sometimes it makes more sense to leave the scale and time interval as default and transorm the units of the results manually. In this case the velocity vector units of $u_{x}$ and $u_{y}$ are stored as displacements. \emph{OpenPIV} results are delivered in $[scale\times(pixels/\Delta t)]$, 
+Sometimes it makes more sense to leave the scale and time interval as default and transform the units of the results manually. In this case the velocity vector units of $u_{x}$ and $u_{y}$ are stored as displacements. \emph{OpenPIV} results are delivered in $[scale\times(pixels/\Delta t)]$, 
 with $scale$ as the selected scale value and $\Delta t$ as the time interval between two images. 
 In order to convert the units to $[m/s]$ is needed:
 
