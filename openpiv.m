@@ -24,20 +24,20 @@ if jump_flag
 image1 = fullfile(images_path,images_list{1});
 image2 = fullfile(images_path,images_list{1});
 
-[a,b] = read_pair_of_images_rect(handles,1,1,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
+[a,b] = read_pair_of_images_rect(,1,1,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 if isempty(a) || isempty(b)
     errordlg('Something wrong with your images')
 end
 
 switch recording_type % sequence of pairs? 
     case{'sequence'}
-        for fileind = 1:handles.amount-jump	% main loop, for whole file list
-            openpiv_main_loop(handles, fileind, jump, cropvec,ittWidth,...
+        for fileind = 1:amount-jump	% main loop, for whole file list
+            openpiv_main_loop(, fileind, jump, cropvec,ittWidth,...
     ittHeight,ovlapHor,ovlapVer, prepfun, s2ntype, s2nl, outl, sclt, dt)
         end
     case{'pairs'}
-        for fileind = 1:2:handles.amount	% main loop, for whole file list
-            openpiv_main_loop(handles, fileind, 1, cropvec,ittWidth,...
+        for fileind = 1:2:amount	% main loop, for whole file list
+            openpiv_main_loop(, fileind, 1, cropvec,ittWidth,...
     ittHeight,ovlapHor,ovlapVer, prepfun, s2ntype, s2nl, outl, sclt, dt)
         end
     otherwise
@@ -46,16 +46,16 @@ end
 
 
 % -- Main loop --- %
-function openpiv_main_loop(handles, fileind, jump, cropvec,ittWidth,...
+function openpiv_main_loop(, fileind, jump, cropvec,ittWidth,...
     ittHeight,ovlapHor,ovlapVer, prepfun, s2ntype, s2nl, outl, sclt, dt)
 % OPENPIV_MAIN_LOOP is the main PIV processing, post-processing and
 % plotting subroutines calls
 
-set(handles.edit_num,'string',sprintf('%d',fileind));
+set(edit_num,'string',sprintf('%d',fileind));
 
 
 
-[a,~,a1,b1,origin] = read_pair_of_images_rect(handles,fileind,jump,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
+[a,~,a1,b1,origin] = read_pair_of_images_rect(,fileind,jump,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 
 % a1 = prepfun(a1);
 % b1 = prepfun(b1);
@@ -78,7 +78,7 @@ resind = 0;
 NfftWidth = 2*ittWidth;
 NfftHeight = 2*ittHeight;
 
-axes(handles.axes1);
+axes(axes1);
 % imshow(imadjust(a),[]);
 imshow(a,[]);
 hold on
@@ -88,7 +88,7 @@ h2 = animatedline('Color','y');
 for m = rows % vertically
     for k = cols % horizontally
         % if Stop button pressed:
-        if (get(handles.pushbutton_start,'UserData') == 0)
+        if (get(pushbutton_start,'UserData') == 0)
             return;
         end
         
@@ -147,10 +147,10 @@ end
 % end
 % drawnow
 
-basename = handles.files{fileind}(1:end-4);
+basename = files{fileind}(1:end-4);
 baseext = '.vec';
 
 openpiv_output(res,no_filt_res,filt_res,dt,sclt,numrows, numcols, ...
-    handles.path,basename,baseext);
+    path,basename,baseext);
 
 hold off
