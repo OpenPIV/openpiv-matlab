@@ -13,8 +13,10 @@ doi: 10.1109/TIM.2010.2047149
 URL: http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5464317&isnumber=5609237
 
 
-### How to download the software  
-Use http://www.openpiv.net/downloads.html for the shortcuts to the zipped software packages
+### How to download the software
+Please note that there are two versions of the GUI: 
+1. older Matlab version, before 2014b: https://github.com/OpenPIV/openpiv-matlab/releases/tag/v1.1
+2. Newer Matlab versions, use https://github.com/OpenPIV/openpiv-matlab/archive/master.zip or clone this repository
 
 ### How to contribute ?
 
@@ -27,12 +29,13 @@ Use http://www.openpiv.net/downloads.html for the shortcuts to the zipped softwa
 
 
 ###  Getting started  tutorials  
-1 Matlab - see the screencast http://youtu.be/yg-LjAt-v3Q or read the tutorial by <a href="mailto:Sergio.Bengoechea.Lozano@tnt.TU-Berlin.DE"> Sergio Bengoechea Lozano, TU Berlin </a>
-[Tutorial](https://github.com/OpenPIV/openpiv.github.com/wiki/Tutorial_OpenPIV.pdf)   
-2. Python - http://www.openpiv.net/openpiv-python/  
-3. C++ - not ready yet  
-4. Spatial and Temporal Analysis Toolbox http://www.openpiv.net/openpiv-spatial-analysis-toolbox/  
-5. Pressure from PIV http://www.openpiv.net/openpiv-pressure  
+1. Matlab - see the screencast http://youtu.be/yg-LjAt-v3Q
+2. Read the [Tutorial](https://github.com/OpenPIV/openpiv-matlab/raw/master/docs/Tutorial_OpenPIV/Tutorial_OpenPIV.pdf)  by <a href="mailto:Sergio.Bengoechea.Lozano@tnt.TU-Berlin.DE"> Sergio Bengoechea Lozano, TU Berlin </a>
+  
+3. Python - http://www.openpiv.net/openpiv-python/  
+4. C++ - not ready yet  
+5. Spatial and Temporal Analysis Toolbox http://www.openpiv.net/openpiv-spatial-analysis-toolbox/  
+6. Pressure from PIV http://www.openpiv.net/openpiv-pressure  
 
 
 ### Support and documentation  
