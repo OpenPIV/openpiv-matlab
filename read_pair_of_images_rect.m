@@ -1,4 +1,4 @@
-function [A,B,A1,B1,origin] = read_pair_of_images_rect(handles,fileind,jump, cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer)
+function [A,B,A1,B1,origin] = read_pair_of_images_rect(image1,image2,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer)
 % READ_PAIR_OF_IMAGES - reads two images (image1,image2) as BMP files
 % and crops them according to 'cropvec'
 % Inputs:
@@ -23,8 +23,8 @@ origin = [0,0];
  %image2 = fullfile(handles.path,handles.files{fileind+jump});
 
 % try
-    A = openpiv_imread(handles,fileind); % ,'tif'); 8 June 2005, no extension is necessary
-    B = openpiv_imread(handles,fileind+jump); % ,'tif'); % more flexibility for different image formats
+    A = openpiv_imread(image1);
+    B = openpiv_imread(image2);
 % catch
 %     warning off
 %     tmp = tiffread2(image1);
