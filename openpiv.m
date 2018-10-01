@@ -14,7 +14,7 @@ function [x,y,u,v] = openpiv(a1,b1,ittWidth,ittHeight,ovlapHor,ovlapVer,s2ntype,
 a1 = im2single(a1);
 b1 = im2single(b1);
 
-if nargin == 6
+if nargin < 7
     s2ntype = 1;
     s2nl = 1;
     sclt = 1;
@@ -22,6 +22,13 @@ if nargin == 6
     outl = 10;
     origin = [0,0]; % origin is bottom left
     % cropvec = [0,0,0,0];
+end
+
+if nargin < 3
+    ittWidth = 32;
+    ittHeight = 32; 
+    ovlapHor = 16; 
+    ovlapVer = 16;
 end
 
 [verSize,horSize]= size(a1);

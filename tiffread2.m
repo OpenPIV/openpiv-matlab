@@ -1,4 +1,4 @@
-function [stack, img_read] = tiffread(filename, img_first, img_last)
+function [stack, img_read] = tiffread2(filename, img_first, img_last)
 % tiffread, version 2.5 December 21 2007
 %
 % [stack, nbImages] = tiffread;
