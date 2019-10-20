@@ -1,7 +1,7 @@
 % test of openpiv command line
 % read two images
-a = openpiv_imread('test1','exp1_001_b.bmp');
-b = openpiv_imread('test1','exp1_001_c.bmp');
+a = imread('test1/exp1_001_b.bmp');
+b = imread('test1/exp1_001_c.bmp');
 
 % run the OpenPIV
 [x,y,u,v] = openpiv(a,b);
