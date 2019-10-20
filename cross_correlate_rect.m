@@ -9,8 +9,8 @@ function [c] = cross_correlate_rect(a2,b2,NfftHeight,NfftWidth)
 
 
 % temprorary solution
-a2 = a2 - mean2(a2);
-b2 = b2 - mean2(b2);
+a2 = a2 - mean(mean(a2));
+b2 = b2 - mean(mean(b2));
 
 b2 = b2(end:-1:1,end:-1:1);
 
