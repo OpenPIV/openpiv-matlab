@@ -1030,6 +1030,9 @@ for m = rows % vertically
             v = 0;
             y = origin(2) + m + ittHeight/2 - 1;
             x = origin(1) + k + ittWidth/2 -  1;
+
+            resind = resind + 1;
+            res(resind,:) = [x y 0.0 0.0 0.0];
             continue
         end
         
