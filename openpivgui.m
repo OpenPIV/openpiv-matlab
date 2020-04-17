@@ -402,10 +402,8 @@ set(handles.axes1,'Units','pixels');
 %     tmp = im2double(tmp.data);
 %     imshow(prepfun(tmp));
 % end
-filename = fullfile(handles.path,handles.files{1});
-disp(filename)
 
-im = openpiv_imread(filename);
+im = openpiv_imread(handles,1);
 imshow(im);
 set(handles.prev_image,'Visible','On');
 set(handles.next_image,'Visible','On');
@@ -468,8 +466,7 @@ set(handles.figure1,'pointer','watch')
 % image1 = fullfile(handles.path,handles.files{1});
 % image2 = fullfile(handles.path,handles.files{2});
 
-[a,b,~,~,~] = read_pair_of_images_rect(handles,1,1,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
-
+[a,b] = read_pair_of_images_rect(handles,1,1,cropvec,ittWidth,ittHeight,ovlapHor,ovlapVer);
 if isempty(a) || isempty(b)
     errordlg('Something wrong with your images')
 end
