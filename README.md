@@ -8,9 +8,7 @@ OpenPIV is provided using Matlab, Python or 32bit Windows executable (based on C
 
 ###  How to cite this work
 
-Taylor, Z.J.; Gurka, R.; Kopp, G.A.; Liberzon, A.; , "Long-Duration Time-Resolved PIV to Study Unsteady Aerodynamics," Instrumentation and Measurement, IEEE Transactions on , vol.59, no.12, pp.3262-3269, Dec. 2010
-doi: 10.1109/TIM.2010.2047149
-URL: http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5464317&isnumber=5609237
+Liberzon, Alex; Gurka, Roi; Ben-Gida, Hadar (2020): OpenPIV - Matlab. figshare. Software. https://doi.org/10.6084/m9.figshare.12330536
 
 
 ### How to download the software
