@@ -837,7 +837,7 @@ filenum = str2num(get(handles.edit_num,'String'));
 filenum = max(1,filenum - 1);
 set(handles.edit_num,'String',int2str(filenum));
 % imshow(fullfile(handles.path,handles.files{1}));
-imshow(openpiv_imread(handles,filenum));
+imshow(openpiv_imread(fullfile(handles.path,handles.files{filenum})));
 guidata(hObject, handles);
 
 
@@ -852,7 +852,7 @@ axes(handles.axes1);
 filenum = str2num(get(handles.edit_num,'String'));
 filenum = min(filenum + 1,length(handles.files));
 set(handles.edit_num,'String',int2str(filenum));
-imshow(openpiv_imread(handles,filenum));
+imshow(openpiv_imread(fullfile(handles.path,handles.files{filenum})));
 guidata(hObject, handles);
 
 
