@@ -7,9 +7,8 @@ OpenPIV is the successor of the well known URAPIV software - it is faster, more 
 OpenPIV is provided using Matlab, Python or 32bit Windows executable (based on C++ and Qt source).
 
 ## Webinar, July 2020
-[![Webinar Youtube](http://img.youtube.com/vi/ci98mLhYEeg/0.jpg)](http://www.youtube.com/watch?v=ci98mLhYEeg)
+[![Webinar Youtube](logo.png)](http://www.youtube.com/watch?v=ci98mLhYEeg)
 
-https://youtu.be/ci98mLhYEeg
 
 ###  How to cite this work
 
