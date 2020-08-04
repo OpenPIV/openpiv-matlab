@@ -6,6 +6,10 @@ OpenPIV is an initiative of scientists to develop a software, algorithms and met
 OpenPIV is the successor of the well known URAPIV software - it is faster, more friendly and much more flexible.
 OpenPIV is provided using Matlab, Python or 32bit Windows executable (based on C++ and Qt source).
 
+## Webinar, July 2020
+
+https://youtu.be/ci98mLhYEeg
+
 ###  How to cite this work
 
 Please cite our paper:
