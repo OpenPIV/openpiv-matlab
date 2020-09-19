@@ -15,7 +15,7 @@ OpenPIV is provided using Matlab, Python or 32bit Windows executable (based on C
 Please cite our paper:
 
 
-Ben Gida, H., Gurka, R. and Liberzon, A. OpenPIV-Matlab -- An open-source software for particle image velocimetry; test case: bird aerodynamics, https://arxiv.org/abs/2007.12967
+Ben-Gida, H., Gurka, R. and Liberzon, A. (2020) OpenPIV-Matlab - An open-source software for particle image velocimetry; test case: birds' aerodynamics, SoftwareX, 12, p. 100585. doi: https://doi.org/10.1016/j.softx.2020.100585.
 
 and the code itself:
 
